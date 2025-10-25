@@ -376,8 +376,6 @@ X-API-Key: your_current_api_key
 
 ## 📸 Screenshots
 
-## 📸 Screenshots
-
 ### Main Application Dashboard
 ![Dashboard](imgs/Main%20Application%20Dashboard.png)
 
