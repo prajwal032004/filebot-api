@@ -381,8 +381,8 @@ X-API-Key: your_current_api_key
 ### Main Application Dashboard
 ![Dashboard](imgs/Main%20Application%20Dashboard.png)
 
-### Folder Management
-![Folders](imgs/Folder%20Management.png)
+### Settings
+![Folders](imgs/Settings.png)
 
 ### Chatbot Interface
 ![Chatbot](imgs/Chatbot.png)
