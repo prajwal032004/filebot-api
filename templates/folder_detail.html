@@ -1,0 +1,811 @@
+{% extends "base.html" %}
+
+{% block title %}{{ folder.name }} - Folder Details{% endblock %}
+
+{% block extra_head %}
+<style>
+    .folder-detail-page {
+        padding: 2rem 1rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+    
+    .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+    }
+    
+    .breadcrumb a {
+        color: #3b82f6;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .breadcrumb a:hover {
+        color: #60a5fa;
+    }
+    
+    .breadcrumb i {
+        font-size: 0.7rem;
+    }
+    
+    .folder-header {
+        padding: 2rem;
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        margin-bottom: 2rem;
+    }
+    
+    .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .folder-title-section {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .folder-icon-large {
+        width: 70px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        border-radius: 18px;
+        font-size: 2rem;
+        color: white;
+    }
+    
+    .folder-title-content h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem 0;
+    }
+    
+    .folder-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .meta-badge {
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .meta-badge.public {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    
+    .meta-badge.private {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    
+    .meta-badge.info {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    
+    .header-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+    
+    .action-btn {
+        padding: 0.75rem 1.25rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: none;
+        text-decoration: none;
+    }
+    
+    .action-btn.primary {
+        background: linear-gradient(135deg, #10b981, #3b82f6);
+        color: white;
+    }
+    
+    .action-btn.danger {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    
+    .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    .folder-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+    }
+    
+    .stat-box {
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .stat-icon {
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        font-size: 1.25rem;
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+    }
+    
+    .stat-content {
+        flex: 1;
+    }
+    
+    .stat-label {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.5);
+        text-transform: uppercase;
+    }
+    
+    .stat-value {
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+    
+    .upload-section {
+        padding: 2rem;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        margin-bottom: 2rem;
+    }
+    
+    .upload-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .upload-title i {
+        color: #10b981;
+    }
+    
+    .upload-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .file-input-wrapper {
+        position: relative;
+    }
+    
+    .file-input-label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 2rem;
+        border: 2px dashed rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.05);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .file-input-label:hover {
+        border-color: #3b82f6;
+        background: rgba(59, 130, 246, 0.05);
+    }
+    
+    .file-input-icon {
+        font-size: 3rem;
+        color: #3b82f6;
+        margin-bottom: 1rem;
+    }
+    
+    .file-input-text {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    .file-input-hint {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .file-input {
+        display: none;
+    }
+    
+    .selected-file {
+        padding: 1rem;
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        border-radius: 10px;
+        display: none;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .selected-file.active {
+        display: flex;
+    }
+    
+    .selected-file i {
+        font-size: 1.5rem;
+        color: #10b981;
+    }
+    
+    .description-input {
+        width: 100%;
+        padding: 0.9rem 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        color: white;
+        font-size: 0.95rem;
+        resize: vertical;
+        min-height: 80px;
+    }
+    
+    .description-input:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.08);
+        border-color: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+    
+    .files-section {
+        margin-bottom: 2rem;
+    }
+    
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .section-title i {
+        color: #3b82f6;
+    }
+    
+    .filter-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .filter-btn {
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: rgba(255, 255, 255, 0.7);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .filter-btn:hover,
+    .filter-btn.active {
+        background: rgba(59, 130, 246, 0.1);
+        border-color: #3b82f6;
+        color: #3b82f6;
+    }
+    
+    .files-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .file-card {
+        padding: 1.5rem;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+    }
+    
+    .file-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .file-preview {
+        width: 100%;
+        height: 200px;
+        border-radius: 10px;
+        background: rgba(0, 0, 0, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        overflow: hidden;
+    }
+    
+    .file-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .file-preview i {
+        font-size: 3rem;
+        color: rgba(255, 255, 255, 0.3);
+    }
+    
+    .file-info {
+        margin-bottom: 1rem;
+    }
+    
+    .file-name {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        word-break: break-word;
+    }
+    
+    .file-name i {
+        color: #3b82f6;
+    }
+    
+    .file-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .file-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .file-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .file-btn {
+        flex: 1;
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        border: none;
+    }
+    
+    .file-btn.view {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    
+    .file-btn.delete {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    
+    .file-btn:hover {
+        transform: translateY(-2px);
+    }
+    
+    .empty-state {
+        padding: 4rem 2rem;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px dashed rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+    }
+    
+    .empty-icon {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(59, 130, 246, 0.1);
+        border-radius: 50%;
+        font-size: 3rem;
+        color: #3b82f6;
+    }
+    
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .empty-description {
+        color: rgba(255, 255, 255, 0.6);
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    @media (min-width: 640px) {
+        .files-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (min-width: 1024px) {
+        .files-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="folder-detail-page">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+        <a href="{{ url_for('dashboard') }}">
+            <i class="fas fa-home"></i> Dashboard
+        </a>
+        <i class="fas fa-chevron-right"></i>
+        <a href="{{ url_for('folders') }}">
+            <i class="fas fa-folder"></i> Folders
+        </a>
+        <i class="fas fa-chevron-right"></i>
+        <span>{{ folder.name }}</span>
+    </nav>
+
+    <!-- Folder Header -->
+    <div class="folder-header glass-effect">
+        <div class="header-top">
+            <div class="folder-title-section">
+                <div class="folder-icon-large">
+                    <i class="fas {% if folder.is_public %}fa-folder-open{% else %}fa-folder{% endif %}"></i>
+                </div>
+                <div class="folder-title-content">
+                    <h1>{{ folder.name }}</h1>
+                    <div class="folder-meta">
+                        <span class="meta-badge {% if folder.is_public %}public{% else %}private{% endif %}">
+                            <i class="fas {% if folder.is_public %}fa-globe{% else %}fa-lock{% endif %}"></i>
+                            {% if folder.is_public %}Public{% else %}Private{% endif %}
+                        </span>
+                        <span class="meta-badge info">
+                            <i class="fas fa-calendar"></i>
+                            Created {{ folder.created_at.strftime('%b %d, %Y') }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <form action="{{ url_for('delete_folder', folder_id=folder.id) }}" method="POST" onsubmit="return confirm('Delete this folder and all its files? This action cannot be undone.')">
+                    <button type="submit" class="action-btn danger">
+                        <i class="fas fa-trash"></i>
+                        Delete Folder
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="folder-stats-grid">
+            <div class="stat-box">
+                <div class="stat-icon">
+                    <i class="fas fa-file"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">Total Files</div>
+                    <div class="stat-value">{{ folder.files|length }}</div>
+                </div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon">
+                    <i class="fas fa-image"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">Images</div>
+                    <div class="stat-value">{{ folder.files|selectattr('file_type', 'in', ['png', 'jpg', 'jpeg', 'gif', 'webp'])|list|length }}</div>
+                </div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon">
+                    <i class="fas fa-file-pdf"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">PDFs</div>
+                    <div class="stat-value">{{ folder.files|selectattr('file_type', 'equalto', 'pdf')|list|length }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Section -->
+    <div class="upload-section glass-effect">
+        <h2 class="upload-title">
+            <i class="fas fa-cloud-upload-alt"></i>
+            Upload Files
+        </h2>
+        <form class="upload-form" id="uploadForm" action="{{ url_for('upload_file', folder_id=folder.id) }}" method="POST" enctype="multipart/form-data">
+            <div class="file-input-wrapper">
+                <label for="fileInput" class="file-input-label">
+                    <i class="fas fa-cloud-upload-alt file-input-icon"></i>
+                    <span class="file-input-text">Click to select file or drag & drop</span>
+                    <span class="file-input-hint">PNG, JPG, JPEG, GIF, WebP, PDF • Max 10MB</span>
+                </label>
+                <input 
+                    type="file" 
+                    id="fileInput" 
+                    name="file" 
+                    class="file-input" 
+                    accept=".png,.jpg,.jpeg,.gif,.webp,.pdf"
+                    required
+                >
+                <div class="selected-file" id="selectedFile">
+                    <i class="fas fa-check-circle"></i>
+                    <span id="fileName"></span>
+                </div>
+            </div>
+
+            <textarea 
+                name="description" 
+                class="description-input" 
+                placeholder="Add a description (optional)..."
+            ></textarea>
+
+            <button type="submit" class="action-btn primary" style="width: 100%;">
+                <i class="fas fa-upload"></i>
+                Upload File
+            </button>
+        </form>
+    </div>
+
+    <!-- Files Section -->
+    <section class="files-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-images"></i>
+                Files ({{ folder.files|length }})
+            </h2>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">
+                    <i class="fas fa-border-all"></i> All
+                </button>
+                <button class="filter-btn" data-filter="image">
+                    <i class="fas fa-image"></i> Images
+                </button>
+                <button class="filter-btn" data-filter="pdf">
+                    <i class="fas fa-file-pdf"></i> PDFs
+                </button>
+            </div>
+        </div>
+
+        {% if folder.files %}
+            <div class="files-grid" id="filesGrid">
+                {% for file in folder.files %}
+                    <div class="file-card glass-effect" data-type="{% if file.file_type in ['png', 'jpg', 'jpeg', 'gif', 'webp'] %}image{% else %}pdf{% endif %}">
+                        <div class="file-preview">
+                            {% if file.file_type in ['png', 'jpg', 'jpeg', 'gif', 'webp'] %}
+                                <img src="{{ url_for('static', filename='uploads/' ~ file.file_path) }}" alt="{{ file.filename }}" loading="lazy">
+                            {% else %}
+                                <i class="fas fa-file-pdf"></i>
+                            {% endif %}
+                        </div>
+                        <div class="file-info">
+                            <h3 class="file-name">
+                                <i class="fas fa-{% if file.file_type in ['png', 'jpg', 'jpeg', 'gif', 'webp'] %}image{% else %}file-pdf{% endif %}"></i>
+                                {{ file.filename }}
+                            </h3>
+                            <div class="file-meta">
+                                <span class="file-meta-item">
+                                    <i class="fas fa-file-alt"></i>
+                                    {{ file.file_type|upper }}
+                                </span>
+                                <span class="file-meta-item">
+                                    <i class="fas fa-calendar"></i>
+                                    {{ file.uploaded_at.strftime('%b %d, %Y') }}
+                                </span>
+                            </div>
+                            {% if file.description %}
+                                <p style="margin-top: 0.75rem; color: rgba(255,255,255,0.7); font-size: 0.9rem;">
+                                    {{ file.description }}
+                                </p>
+                            {% endif %}
+                        </div>
+                        <div class="file-actions">
+                            <a href="{{ url_for('static', filename='uploads/' ~ file.file_path) }}" target="_blank" class="file-btn view">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <form action="{{ url_for('delete_file', file_id=file.id) }}" method="POST" style="flex: 1;" onsubmit="return confirm('Delete this file?')">
+                                <button type="submit" class="file-btn delete" style="width: 100%;">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state glass-effect">
+                <div class="empty-icon">
+                    <i class="fas fa-file-image"></i>
+                </div>
+                <h3 class="empty-title">No Files Yet</h3>
+                <p class="empty-description">
+                    Upload your first file using the form above. Supported formats: PNG, JPG, JPEG, GIF, WebP, and PDF.
+                </p>
+            </div>
+        {% endif %}
+    </section>
+</div>
+
+<script>
+    // File input preview
+    const fileInput = document.getElementById('fileInput');
+    const selectedFile = document.getElementById('selectedFile');
+    const fileName = document.getElementById('fileName');
+
+    fileInput.addEventListener('change', function(e) {
+        if (this.files && this.files[0]) {
+            selectedFile.classList.add('active');
+            fileName.textContent = this.files[0].name;
+        }
+    });
+
+    // Upload form submission
+    const uploadForm = document.getElementById('uploadForm');
+    if (uploadForm) {
+        uploadForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalHTML = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+            submitBtn.disabled = true;
+            
+            try {
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    location.reload();
+                } else {
+                    alert(result.message || 'Upload failed');
+                    submitBtn.innerHTML = originalHTML;
+                    submitBtn.disabled = false;
+                }
+            } catch (error) {
+                alert('An error occurred during upload');
+                submitBtn.innerHTML = originalHTML;
+                submitBtn.disabled = false;
+            }
+        });
+    }
+
+    // Filter functionality
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const fileCards = document.querySelectorAll('.file-card');
+
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const filter = this.dataset.filter;
+            
+            filterButtons.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            fileCards.forEach(card => {
+                if (filter === 'all' || card.dataset.type === filter) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // Drag and drop
+    const fileInputLabel = document.querySelector('.file-input-label');
+    
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        fileInputLabel.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        fileInputLabel.addEventListener(eventName, function() {
+            this.style.borderColor = '#3b82f6';
+            this.style.background = 'rgba(59, 130, 246, 0.1)';
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        fileInputLabel.addEventListener(eventName, function() {
+            this.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+            this.style.background = 'rgba(255, 255, 255, 0.05)';
+        });
+    });
+
+    fileInputLabel.addEventListener('drop', function(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        fileInput.files = files;
+        
+        if (files.length > 0) {
+            selectedFile.classList.add('active');
+            fileName.textContent = files[0].name;
+        }
+    });
+</script>
+{% endblock %}

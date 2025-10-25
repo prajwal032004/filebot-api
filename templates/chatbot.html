@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="theme-color" content="#a78bfa" />
+    <meta
+      name="description"
+      content="AI-powered Image Assistant - Manage and search your images and PDFs effortlessly"
+    />
+    <link rel="manifest" href="/static/manifest.json" />
+    <link rel="apple-touch-icon" href="/static/icon-192.png" />
+    <title>Image Assistant Chatbot</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      :root {
+        --primary: #a78bfa;
+        --secondary: #818cf8;
+        --accent: #c084fc;
+        --bg-dark: #0f0f23;
+        --bg-darker: #070714;
+        --glass-bg: rgba(255, 255, 255, 0.05);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --text-primary: #e0e7ff;
+        --text-secondary: #a5b4fc;
+        --text-muted: #6b7280;
+        --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        --glow: 0 0 20px rgba(167, 139, 250, 0.3);
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background: var(--bg-darker);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+        overflow: hidden;
+        position: relative;
+      }
+
+      body::before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+            circle at 20% 50%,
+            rgba(167, 139, 250, 0.15) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 80%,
+            rgba(129, 140, 248, 0.15) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 40% 20%,
+            rgba(192, 132, 252, 0.1) 0%,
+            transparent 50%
+          );
+        animation: pulse 20s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.8;
+        }
+      }
+
+      .chat-container {
+        width: 100%;
+        height: 100vh;
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        z-index: 1;
+      }
+
+      @media (min-width: 768px) {
+        body {
+          padding: 20px;
+        }
+        .chat-container {
+          width: 90%;
+          max-width: 1000px;
+          height: 90vh;
+          border-radius: 24px;
+          box-shadow: var(--shadow);
+        }
+      }
+
+      .chat-header {
+        background: linear-gradient(
+          135deg,
+          rgba(167, 139, 250, 0.2) 0%,
+          rgba(129, 140, 248, 0.2) 100%
+        );
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--glass-border);
+        color: var(--text-primary);
+        padding: 20px;
+        text-align: center;
+        flex-shrink: 0;
+        position: relative;
+      }
+
+      @media (min-width: 768px) {
+        .chat-header {
+          padding: 28px;
+          border-radius: 24px 24px 0 0;
+        }
+      }
+
+      .chat-header h1 {
+        font-size: 1.5em;
+        margin-bottom: 6px;
+        font-weight: 600;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      @media (min-width: 768px) {
+        .chat-header h1 {
+          font-size: 1.8em;
+        }
+      }
+
+      .chat-header p {
+        font-size: 0.85em;
+        color: var(--text-secondary);
+      }
+
+      .settings-btn {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        color: var(--text-primary);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .settings-btn:hover {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        box-shadow: var(--glow);
+      }
+
+      .chat-messages {
+        flex: 1;
+        padding: 16px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      @media (min-width: 768px) {
+        .chat-messages {
+          padding: 24px;
+        }
+      }
+
+      .message {
+        margin-bottom: 16px;
+        animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .message.user {
+        text-align: right;
+      }
+
+      .message-content {
+        display: inline-block;
+        padding: 12px 16px;
+        border-radius: 18px;
+        max-width: 85%;
+        word-wrap: break-word;
+        font-size: 0.95em;
+        line-height: 1.5;
+      }
+
+      @media (min-width: 768px) {
+        .message-content {
+          max-width: 70%;
+        }
+      }
+
+      .message.user .message-content {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border-bottom-right-radius: 4px;
+        box-shadow: var(--glow);
+      }
+
+      .message.bot .message-content {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        color: var(--text-primary);
+        text-align: left;
+        border-bottom-left-radius: 4px;
+      }
+
+      .message-time {
+        font-size: 0.7em;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+
+      .image-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 12px;
+        margin-top: 12px;
+        width: 100%;
+      }
+
+      @media (min-width: 768px) {
+        .image-grid {
+          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+          gap: 16px;
+        }
+      }
+
+      .image-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        position: relative;
+      }
+
+      .image-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(167, 139, 250, 0.1),
+          rgba(129, 140, 248, 0.1)
+        );
+        opacity: 0;
+        transition: opacity 0.3s;
+        pointer-events: none;
+      }
+
+      .image-card:hover::before {
+        opacity: 1;
+      }
+
+      .image-card:active {
+        transform: scale(0.98);
+      }
+
+      @media (min-width: 768px) {
+        .image-card:hover {
+          transform: translateY(-4px);
+          box-shadow: var(--glow);
+          border-color: var(--primary);
+        }
+      }
+
+      .image-card img {
+        width: 100%;
+        height: 140px;
+        object-fit: cover;
+        display: block;
+      }
+
+      @media (min-width: 768px) {
+        .image-card img {
+          height: 160px;
+        }
+      }
+
+      .image-card-info {
+        padding: 10px;
+      }
+
+      @media (min-width: 768px) {
+        .image-card-info {
+          padding: 12px;
+        }
+      }
+
+      .image-card-info h4 {
+        font-size: 0.85em;
+        margin-bottom: 4px;
+        color: var(--text-primary);
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .image-card-info p {
+        font-size: 0.72em;
+        color: var(--text-secondary);
+        margin-bottom: 6px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .view-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border-radius: 6px;
+        font-size: 0.7em;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s;
+        margin-top: 4px;
+      }
+
+      .view-btn:active {
+        transform: scale(0.95);
+      }
+
+      @media (min-width: 768px) {
+        .view-btn:hover {
+          box-shadow: var(--glow);
+        }
+      }
+
+      .pdf-list {
+        margin-top: 12px;
+        width: 100%;
+      }
+
+      .pdf-item {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        padding: 12px;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      @media (min-width: 768px) {
+        .pdf-item {
+          padding: 16px;
+        }
+      }
+
+      .pdf-item:active {
+        transform: scale(0.99);
+      }
+
+      @media (min-width: 768px) {
+        .pdf-item:hover {
+          transform: translateX(4px);
+          box-shadow: var(--glow);
+          border-color: var(--primary);
+        }
+      }
+
+      .pdf-icon {
+        font-size: 2em;
+        color: var(--primary);
+        flex-shrink: 0;
+      }
+
+      .pdf-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .pdf-info h4 {
+        color: var(--text-primary);
+        margin-bottom: 4px;
+        font-size: 0.9em;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .pdf-info p {
+        font-size: 0.75em;
+        color: var(--text-secondary);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .pdf-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 0.8em;
+        font-weight: 600;
+        transition: all 0.3s;
+        flex-shrink: 0;
+        white-space: nowrap;
+      }
+
+      .pdf-link:active {
+        transform: scale(0.95);
+      }
+
+      @media (min-width: 768px) {
+        .pdf-link:hover {
+          box-shadow: var(--glow);
+        }
+      }
+
+      .chat-input-container {
+        padding: 12px;
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid var(--glass-border);
+        flex-shrink: 0;
+      }
+
+      @media (min-width: 768px) {
+        .chat-input-container {
+          padding: 20px;
+          border-radius: 0 0 24px 24px;
+        }
+      }
+
+      .chat-input-wrapper {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .chat-input {
+        flex: 1;
+        padding: 12px 18px;
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        font-size: 0.95em;
+        outline: none;
+        transition: all 0.3s;
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        color: var(--text-primary);
+      }
+
+      .chat-input::placeholder {
+        color: var(--text-muted);
+      }
+
+      @media (min-width: 768px) {
+        .chat-input {
+          padding: 14px 20px;
+        }
+      }
+
+      .chat-input:focus {
+        border-color: var(--primary);
+        box-shadow: var(--glow);
+      }
+
+      .send-button {
+        padding: 12px 20px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border: none;
+        border-radius: 24px;
+        cursor: pointer;
+        font-size: 0.9em;
+        font-weight: 600;
+        transition: all 0.3s;
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      @media (min-width: 768px) {
+        .send-button {
+          padding: 14px 28px;
+        }
+      }
+
+      .send-button:active {
+        transform: scale(0.95);
+      }
+
+      @media (min-width: 768px) {
+        .send-button:hover {
+          transform: scale(1.02);
+          box-shadow: var(--glow);
+        }
+      }
+
+      .typing-indicator {
+        display: none;
+        padding: 12px 16px;
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: 18px;
+        width: fit-content;
+        border-bottom-left-radius: 4px;
+      }
+
+      .typing-indicator.show {
+        display: inline-block;
+      }
+
+      .typing-indicator span {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--primary);
+        margin: 0 2px;
+        animation: typing 1.4s infinite;
+      }
+
+      .typing-indicator span:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes typing {
+        0%,
+        60%,
+        100% {
+          transform: translateY(0);
+          opacity: 0.5;
+        }
+        30% {
+          transform: translateY(-10px);
+          opacity: 1;
+        }
+      }
+
+      .quick-actions {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+
+      .quick-actions::-webkit-scrollbar {
+        display: none;
+      }
+
+      .quick-action {
+        padding: 8px 14px;
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 0.8em;
+        transition: all 0.3s;
+        white-space: nowrap;
+        font-weight: 500;
+        color: var(--text-primary);
+      }
+
+      .quick-action:active {
+        transform: scale(0.95);
+      }
+
+      @media (min-width: 768px) {
+        .quick-action:hover {
+          background: linear-gradient(135deg, var(--primary), var(--secondary));
+          color: white;
+          border-color: transparent;
+          box-shadow: var(--glow);
+        }
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+
+      .modal.show {
+        display: flex;
+        animation: fadeIn 0.3s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .modal-content {
+        max-width: 95%;
+        max-height: 90%;
+        border-radius: 12px;
+        object-fit: contain;
+        box-shadow: var(--glow);
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-size: 28px;
+        color: white;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: 50%;
+        transition: all 0.3s;
+      }
+
+      @media (min-width: 768px) {
+        .modal-close {
+          top: 25px;
+          right: 30px;
+        }
+      }
+
+      .modal-close:hover {
+        background: var(--primary);
+        transform: rotate(90deg);
+        box-shadow: var(--glow);
+      }
+
+      .chat-messages::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .chat-messages::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .chat-messages::-webkit-scrollbar-thumb {
+        background: rgba(167, 139, 250, 0.3);
+        border-radius: 3px;
+      }
+
+      .chat-messages::-webkit-scrollbar-thumb:hover {
+        background: rgba(167, 139, 250, 0.5);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chat-container">
+      <div class="chat-header">
+        <h1><i class="fas fa-robot"></i> Image Assistant</h1>
+        <p>Ask me to find images, PDFs, or search your collection</p>
+        <button class="settings-btn" onclick="goToSettings()">
+          <i class="fas fa-cog"></i>
+        </button>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <div class="message bot">
+          <div class="message-content">
+            <i class="fas fa-sparkles"></i> Hello! I'm your Image Assistant. I
+            can help you find and explore your images and PDFs.<br /><br />
+            Try asking me:<br />
+            • Show all images<br />
+            • Find images about "nature"<br />
+            • Show PDFs<br />
+            • Search for "product"
+          </div>
+          <div class="message-time" id="initialTime"></div>
+        </div>
+      </div>
+
+      <div class="chat-input-container">
+        <div class="quick-actions">
+          <div
+            class="quick-action"
+            onclick="sendQuickMessage('Show all images')"
+          >
+            <i class="fas fa-images"></i> All Images
+          </div>
+          <div class="quick-action" onclick="sendQuickMessage('Show PDFs')">
+            <i class="fas fa-file-pdf"></i> PDFs
+          </div>
+          <div class="quick-action" onclick="sendQuickMessage('Show folders')">
+            <i class="fas fa-folder"></i> Folders
+          </div>
+          <div class="quick-action" onclick="sendQuickMessage('Help')">
+            <i class="fas fa-question-circle"></i> Help
+          </div>
+        </div>
+        <div class="chat-input-wrapper">
+          <input
+            type="text"
+            class="chat-input"
+            id="userInput"
+            placeholder="Type your message..."
+            onkeypress="handleKeyPress(event)"
+          />
+          <button class="send-button" onclick="sendMessage()">
+            <span>Send</span>
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="imageModal" onclick="closeModal()">
+      <span class="modal-close"><i class="fas fa-times"></i></span>
+      <img class="modal-content" id="modalImage" />
+    </div>
+
+    <script>
+      let apiKey = null;
+
+      window.onload = function () {
+        document.getElementById("initialTime").textContent = getCurrentTime();
+
+        // Check for API key
+        apiKey = localStorage.getItem("imageAssistantApiKey");
+        if (!apiKey) {
+          alert("No API key found. Redirecting to setup...");
+          window.location.href = "/";
+          return;
+        }
+
+        document.getElementById("userInput").focus();
+
+        // Register service worker
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker
+            .register("/static/sw.js")
+            .then((reg) => console.log("Service Worker registered"))
+            .catch((err) => console.log("Service Worker registration failed"));
+        }
+      };
+
+      function getCurrentTime() {
+        const now = new Date();
+        return now.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      function scrollToBottom() {
+        const chatMessages = document.getElementById("chatMessages");
+        setTimeout(() => {
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        }, 100);
+      }
+
+      function truncateFilename(filename, maxLength = 20) {
+        if (filename.length <= maxLength) return filename;
+        const ext = filename.split(".").pop();
+        const name = filename.substring(0, filename.lastIndexOf("."));
+        const truncated = name.substring(0, maxLength - ext.length - 4);
+        return `${truncated}...${ext}`;
+      }
+
+      function addMessage(content, isUser = false) {
+        const chatMessages = document.getElementById("chatMessages");
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `message ${isUser ? "user" : "bot"}`;
+        messageDiv.innerHTML = `
+                <div class="message-content">${content}</div>
+                <div class="message-time">${getCurrentTime()}</div>
+            `;
+        chatMessages.appendChild(messageDiv);
+        scrollToBottom();
+      }
+
+      function showTypingIndicator() {
+        const chatMessages = document.getElementById("chatMessages");
+        const typingDiv = document.createElement("div");
+        typingDiv.className = "message bot";
+        typingDiv.id = "typingIndicator";
+        typingDiv.innerHTML =
+          '<div class="typing-indicator show"><span></span><span></span><span></span></div>';
+        chatMessages.appendChild(typingDiv);
+        scrollToBottom();
+      }
+
+      function hideTypingIndicator() {
+        const typing = document.getElementById("typingIndicator");
+        if (typing) typing.remove();
+      }
+
+      function createImageGrid(images) {
+        let html = '<div class="image-grid">';
+        images.forEach((img) => {
+          const shortFilename = truncateFilename(img.filename, 18);
+          html += `
+                    <div class="image-card">
+                        <img src="${img.url}" alt="${
+            img.filename
+          }" loading="lazy" onclick="event.stopPropagation(); openImageModal('${
+            img.url
+          }')">
+                        <div class="image-card-info">
+                            <h4 title="${img.filename}">${shortFilename}</h4>
+                            <p>${img.description || "No description"}</p>
+                            ${
+                              img.folder_name
+                                ? `<p><i class="fas fa-folder"></i> ${img.folder_name}</p>`
+                                : ""
+                            }
+                            <a href="${
+                              img.url
+                            }" target="_blank" class="view-btn" onclick="event.stopPropagation()">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                        </div>
+                    </div>
+                `;
+        });
+        html += "</div>";
+        return html;
+      }
+
+      function createPdfList(pdfs) {
+        let html = '<div class="pdf-list">';
+        pdfs.forEach((pdf) => {
+          const shortFilename = truncateFilename(pdf.filename, 25);
+          html += `
+                    <div class="pdf-item">
+                        <div class="pdf-icon"><i class="fas fa-file-pdf"></i></div>
+                        <div class="pdf-info">
+                            <h4 title="${pdf.filename}">${shortFilename}</h4>
+                            <p>${pdf.description || "No description"}</p>
+                            ${
+                              pdf.folder_name
+                                ? `<p style="margin-top: 4px;"><i class="fas fa-folder"></i> ${pdf.folder_name}</p>`
+                                : ""
+                            }
+                        </div>
+                        <a href="${pdf.url}" target="_blank" class="pdf-link">
+                            <i class="fas fa-external-link-alt"></i> View
+                        </a>
+                    </div>
+                `;
+        });
+        html += "</div>";
+        return html;
+      }
+
+      async function sendMessage() {
+        const input = document.getElementById("userInput");
+        const message = input.value.trim();
+
+        if (!message) return;
+
+        if (!apiKey) {
+          alert("API key not found. Please go back to setup.");
+          window.location.href = "/";
+          return;
+        }
+
+        addMessage(message, true);
+        input.value = "";
+
+        showTypingIndicator();
+
+        try {
+          const response = await fetch("/chat", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              message: message,
+              api_key: apiKey,
+            }),
+          });
+
+          const data = await response.json();
+          hideTypingIndicator();
+
+          if (response.status === 401) {
+            addMessage("Invalid API key. Please update your settings.", false);
+            return;
+          }
+
+          let content = data.message;
+
+          if (data.type === "images" && data.data && data.data.length > 0) {
+            content += createImageGrid(data.data);
+          } else if (
+            data.type === "pdfs" &&
+            data.data &&
+            data.data.length > 0
+          ) {
+            content += createPdfList(data.data);
+          } else if (data.type === "mixed") {
+            if (data.images && data.images.length > 0) {
+              content +=
+                "<br><br><strong>Images:</strong>" +
+                createImageGrid(data.images);
+            }
+            if (data.pdfs && data.pdfs.length > 0) {
+              content +=
+                "<br><br><strong>PDFs:</strong>" + createPdfList(data.pdfs);
+            }
+          }
+
+          addMessage(content, false);
+        } catch (error) {
+          hideTypingIndicator();
+          addMessage("Sorry, I encountered an error. Please try again.", false);
+          console.error("Error:", error);
+        }
+      }
+
+      function sendQuickMessage(message) {
+        document.getElementById("userInput").value = message;
+        sendMessage();
+      }
+
+      function handleKeyPress(event) {
+        if (event.key === "Enter") {
+          sendMessage();
+        }
+      }
+
+      function openImageModal(url) {
+        const modal = document.getElementById("imageModal");
+        const modalImg = document.getElementById("modalImage");
+        modal.classList.add("show");
+        modalImg.src = url;
+      }
+
+      function closeModal() {
+        document.getElementById("imageModal").classList.remove("show");
+      }
+
+      function goToSettings() {
+        if (
+          confirm("Go back to settings? You can update your API key there.")
+        ) {
+          window.location.href = "/";
+        }
+      }
+    </script>
+  </body>
+</html>

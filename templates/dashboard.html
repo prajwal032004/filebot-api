@@ -1,0 +1,670 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Overview{% endblock %}
+
+{% block extra_head %}
+<style>
+    .dashboard-page {
+        padding: 2rem 1rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+    
+    .dashboard-header {
+        margin-bottom: 2rem;
+    }
+    
+    .welcome-section {
+        padding: 2rem;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 20px;
+        margin-bottom: 2rem;
+    }
+    
+    .welcome-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .welcome-title i {
+        color: #3b82f6;
+        font-size: 2.5rem;
+    }
+    
+    .welcome-subtitle {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1.1rem;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        padding: 2rem;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--color-start), var(--color-end));
+    }
+    
+    .stat-card.folders {
+        --color-start: #3b82f6;
+        --color-end: #8b5cf6;
+    }
+    
+    .stat-card.files {
+        --color-start: #10b981;
+        --color-end: #3b82f6;
+    }
+    
+    .stat-card.storage {
+        --color-start: #f59e0b;
+        --color-end: #ef4444;
+    }
+    
+    .stat-card.api {
+        --color-start: #8b5cf6;
+        --color-end: #ec4899;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .stat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+    
+    .stat-title {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.6);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        font-size: 1.5rem;
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .stat-card.folders .stat-icon { color: #3b82f6; }
+    .stat-card.files .stat-icon { color: #10b981; }
+    .stat-card.storage .stat-icon { color: #f59e0b; }
+    .stat-card.api .stat-icon { color: #8b5cf6; }
+    
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, var(--color-start), var(--color-end));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .stat-description {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .stat-trend {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .stat-trend.up {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+    
+    .stat-trend.down {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+    
+    .quick-actions {
+        margin-bottom: 2rem;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .section-title i {
+        color: #3b82f6;
+    }
+    
+    .actions-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .action-card {
+        padding: 1.5rem;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .action-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateX(5px);
+    }
+    
+    .action-icon {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        font-size: 1.75rem;
+        flex-shrink: 0;
+    }
+    
+    .action-card:nth-child(1) .action-icon {
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        color: white;
+    }
+    
+    .action-card:nth-child(2) .action-icon {
+        background: linear-gradient(135deg, #10b981, #3b82f6);
+        color: white;
+    }
+    
+    .action-card:nth-child(3) .action-icon {
+        background: linear-gradient(135deg, #f59e0b, #ef4444);
+        color: white;
+    }
+    
+    .action-card:nth-child(4) .action-icon {
+        background: linear-gradient(135deg, #8b5cf6, #ec4899);
+        color: white;
+    }
+    
+    .action-content {
+        flex: 1;
+    }
+    
+    .action-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+    
+    .action-description {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+    }
+    
+    .action-arrow {
+        font-size: 1.5rem;
+        color: rgba(255, 255, 255, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .action-card:hover .action-arrow {
+        color: rgba(255, 255, 255, 0.7);
+        transform: translateX(5px);
+    }
+    
+    .recent-activity {
+        margin-bottom: 2rem;
+    }
+    
+    .activity-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .activity-item {
+        padding: 1.5rem;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .activity-icon {
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+    }
+    
+    .activity-item:nth-child(1) .activity-icon {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+    }
+    
+    .activity-item:nth-child(2) .activity-icon {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+    
+    .activity-item:nth-child(3) .activity-icon {
+        background: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+    }
+    
+    .activity-content {
+        flex: 1;
+    }
+    
+    .activity-title {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+    
+    .activity-time {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .tips-section {
+        padding: 2rem;
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1));
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    
+    .tips-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .tips-icon {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(16, 185, 129, 0.2);
+        border-radius: 12px;
+        font-size: 1.5rem;
+        color: #10b981;
+    }
+    
+    .tips-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+    }
+    
+    .tips-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .tip-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+    }
+    
+    .tip-number {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #10b981, #3b82f6);
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+    
+    .tip-text {
+        flex: 1;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .tip-text strong {
+        color: #10b981;
+    }
+    
+    @media (min-width: 640px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .actions-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (min-width: 1024px) {
+        .stats-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+        
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-page">
+    <div class="dashboard-header">
+        <div class="welcome-section glass-effect">
+            <h1 class="welcome-title">
+                <i class="fas fa-chart-line"></i>
+                Welcome back, {{ current_user.username }}!
+            </h1>
+            <p class="welcome-subtitle">
+                Here's an overview of your Image API account. Manage folders, track usage, and access your API key.
+            </p>
+        </div>
+    </div>
+
+    <!-- Statistics Grid -->
+    <div class="stats-grid">
+        <div class="stat-card folders glass-effect">
+            <div class="stat-header">
+                <div>
+                    <div class="stat-title">Total Folders</div>
+                </div>
+                <div class="stat-icon">
+                    <i class="fas fa-folder"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ total_folders }}</div>
+            <div class="stat-description">
+                <span>Active collections</span>
+                {% if total_folders > 0 %}
+                    <span class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i> Active
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="stat-card files glass-effect">
+            <div class="stat-header">
+                <div>
+                    <div class="stat-title">Total Files</div>
+                </div>
+                <div class="stat-icon">
+                    <i class="fas fa-file-image"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ total_files }}</div>
+            <div class="stat-description">
+                <span>Images & PDFs stored</span>
+                {% if total_files > 0 %}
+                    <span class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i> Growing
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="stat-card storage glass-effect">
+            <div class="stat-header">
+                <div>
+                    <div class="stat-title">Storage Used</div>
+                </div>
+                <div class="stat-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+            </div>
+            <div class="stat-value">0 MB</div>
+            <div class="stat-description">
+                <span>10 MB max per file</span>
+            </div>
+        </div>
+
+        <div class="stat-card api glass-effect">
+            <div class="stat-header">
+                <div>
+                    <div class="stat-title">API Status</div>
+                </div>
+                <div class="stat-icon">
+                    <i class="fas fa-plug"></i>
+                </div>
+            </div>
+            <div class="stat-value">
+                <i class="fas fa-check-circle" style="font-size: 2.5rem;"></i>
+            </div>
+            <div class="stat-description">
+                <span>All systems operational</span>
+                <span class="stat-trend up">
+                    <i class="fas fa-circle" style="font-size: 0.5rem;"></i> Online
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-content">
+        <div>
+            <!-- Quick Actions -->
+            <section class="quick-actions">
+                <h2 class="section-title">
+                    <i class="fas fa-bolt"></i>
+                    Quick Actions
+                </h2>
+                <div class="actions-grid">
+                    <a href="{{ url_for('folders') }}" class="action-card glass-effect">
+                        <div class="action-icon">
+                            <i class="fas fa-folder-plus"></i>
+                        </div>
+                        <div class="action-content">
+                            <h3 class="action-title">Create Folder</h3>
+                            <p class="action-description">Organize files in new folders</p>
+                        </div>
+                        <i class="fas fa-arrow-right action-arrow"></i>
+                    </a>
+
+                    <a href="{{ url_for('folders') }}" class="action-card glass-effect">
+                        <div class="action-icon">
+                            <i class="fas fa-upload"></i>
+                        </div>
+                        <div class="action-content">
+                            <h3 class="action-title">Upload Files</h3>
+                            <p class="action-description">Add images or PDFs to folders</p>
+                        </div>
+                        <i class="fas fa-arrow-right action-arrow"></i>
+                    </a>
+
+                    <a href="{{ url_for('settings') }}" class="action-card glass-effect">
+                        <div class="action-icon">
+                            <i class="fas fa-key"></i>
+                        </div>
+                        <div class="action-content">
+                            <h3 class="action-title">View API Key</h3>
+                            <p class="action-description">Copy or regenerate your key</p>
+                        </div>
+                        <i class="fas fa-arrow-right action-arrow"></i>
+                    </a>
+
+                    <a href="{{ url_for('docs') }}" class="action-card glass-effect">
+                        <div class="action-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="action-content">
+                            <h3 class="action-title">Read Docs</h3>
+                            <p class="action-description">Learn how to use the API</p>
+                        </div>
+                        <i class="fas fa-arrow-right action-arrow"></i>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Recent Activity -->
+            <section class="recent-activity">
+                <h2 class="section-title">
+                    <i class="fas fa-history"></i>
+                    Recent Activity
+                </h2>
+                <div class="activity-list">
+                    <div class="activity-item glass-effect">
+                        <div class="activity-icon">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">Account Created</div>
+                            <div class="activity-time">
+                                <i class="fas fa-clock"></i>
+                                {{ current_user.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if total_folders > 0 %}
+                    <div class="activity-item glass-effect">
+                        <div class="activity-icon">
+                            <i class="fas fa-folder-open"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">Folders Created</div>
+                            <div class="activity-time">
+                                <i class="fas fa-check-circle"></i>
+                                You have {{ total_folders }} active folder{{ 's' if total_folders != 1 else '' }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if total_files > 0 %}
+                    <div class="activity-item glass-effect">
+                        <div class="activity-icon">
+                            <i class="fas fa-file-upload"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">Files Uploaded</div>
+                            <div class="activity-time">
+                                <i class="fas fa-check-circle"></i>
+                                You have {{ total_files }} file{{ 's' if total_files != 1 else '' }} stored
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+
+        <!-- Tips Section -->
+        <aside>
+            <div class="tips-section glass-effect">
+                <div class="tips-header">
+                    <div class="tips-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3 class="tips-title">Getting Started</h3>
+                </div>
+                <div class="tips-list">
+                    <div class="tip-item">
+                        <div class="tip-number">1</div>
+                        <div class="tip-text">
+                            <strong>Create folders</strong> to organize your images and PDFs by project or category
+                        </div>
+                    </div>
+                    <div class="tip-item">
+                        <div class="tip-number">2</div>
+                        <div class="tip-text">
+                            <strong>Get your API key</strong> from Settings and start making authenticated requests
+                        </div>
+                    </div>
+                    <div class="tip-item">
+                        <div class="tip-number">3</div>
+                        <div class="tip-text">
+                            <strong>Read the docs</strong> for code examples in Python, JavaScript, and cURL
+                        </div>
+                    </div>
+                    <div class="tip-item">
+                        <div class="tip-number">4</div>
+                        <div class="tip-text">
+                            <strong>Upload files</strong> up to 10MB each in PNG, JPG, JPEG, GIF, WebP, or PDF format
+                        </div>
+                    </div>
+                    <div class="tip-item">
+                        <div class="tip-number">5</div>
+                        <div class="tip-text">
+                            <strong>Use metadata</strong> to track file dimensions, size, and upload timestamps
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
+{% endblock %}

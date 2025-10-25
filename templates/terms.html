@@ -1,0 +1,508 @@
+{% extends "base.html" %}
+
+{% block title %}Terms of Service - Image API{% endblock %}
+
+{% block description %}Terms of Service for Image API - Learn about user responsibilities, API usage guidelines, and service limitations.{% endblock %}
+
+{% block extra_head %}
+<style>
+    .legal-page {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 3rem 2rem;
+    }
+    
+    .legal-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding: 3rem 2rem;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+        border-radius: var(--radius-xl);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .legal-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        border-radius: 50%;
+        font-size: 2.5rem;
+        color: white;
+    }
+    
+    .legal-title {
+        font-size: 2.5rem;
+        margin-bottom: 0.75rem;
+        font-weight: 800;
+    }
+    
+    .legal-updated {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+    }
+    
+    .legal-content {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-xl);
+        padding: 3rem;
+        backdrop-filter: blur(20px);
+        line-height: 1.8;
+    }
+    
+    .legal-section {
+        margin-bottom: 3rem;
+    }
+    
+    .legal-section:last-child {
+        margin-bottom: 0;
+    }
+    
+    .section-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 35px;
+        height: 35px;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        border-radius: 50%;
+        color: white;
+        font-weight: 700;
+        margin-right: 1rem;
+        font-size: 1.1rem;
+    }
+    
+    .legal-section h2 {
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        color: var(--text-primary);
+    }
+    
+    .legal-section h3 {
+        font-size: 1.3rem;
+        margin: 2rem 0 1rem;
+        color: #3b82f6;
+    }
+    
+    .legal-section p {
+        margin-bottom: 1.25rem;
+        color: var(--text-secondary);
+    }
+    
+    .legal-section ul,
+    .legal-section ol {
+        margin: 1.5rem 0;
+        padding-left: 2rem;
+    }
+    
+    .legal-section li {
+        margin-bottom: 1rem;
+        color: var(--text-secondary);
+    }
+    
+    .legal-section li strong {
+        color: var(--text-primary);
+    }
+    
+    .highlight-box {
+        background: rgba(59, 130, 246, 0.1);
+        border-left: 4px solid #3b82f6;
+        padding: 1.5rem;
+        border-radius: var(--radius-md);
+        margin: 2rem 0;
+    }
+    
+    .highlight-box strong {
+        color: #3b82f6;
+    }
+    
+    .warning-box {
+        background: rgba(239, 68, 68, 0.1);
+        border-left: 4px solid #ef4444;
+        padding: 1.5rem;
+        border-radius: var(--radius-md);
+        margin: 2rem 0;
+    }
+    
+    .warning-box strong {
+        color: #ef4444;
+    }
+    
+    code {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        color: #10b981;
+        font-size: 0.9em;
+    }
+    
+    .contact-section {
+        text-align: center;
+        margin-top: 3rem;
+        padding: 2rem;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1));
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    
+    .contact-section h3 {
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+    }
+    
+    .contact-section a {
+        color: #3b82f6;
+        text-decoration: none;
+        font-weight: 600;
+    }
+    
+    .contact-section a:hover {
+        text-decoration: underline;
+    }
+    
+    /* Mobile */
+    @media (max-width: 767px) {
+        .legal-page {
+            padding: 2rem 1rem;
+        }
+        
+        .legal-header {
+            padding: 2rem 1rem;
+        }
+        
+        .legal-icon {
+            width: 60px;
+            height: 60px;
+            font-size: 2rem;
+        }
+        
+        .legal-title {
+            font-size: 1.75rem;
+        }
+        
+        .legal-content {
+            padding: 1.5rem;
+        }
+        
+        .legal-section h2 {
+            font-size: 1.4rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+        
+        .section-number {
+            width: 30px;
+            height: 30px;
+            font-size: 0.95rem;
+            margin-right: 0;
+        }
+        
+        .legal-section h3 {
+            font-size: 1.15rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="legal-page">
+    <div class="legal-header">
+        <div class="legal-icon">
+            <i class="fas fa-file-contract"></i>
+        </div>
+        <h1 class="legal-title">Terms of Service</h1>
+        <p class="legal-updated"><strong>Last Updated:</strong> October 24, 2025</p>
+        <p class="legal-updated"><strong>Effective Date:</strong> October 24, 2025</p>
+    </div>
+
+    <div class="legal-content">
+        <!-- Introduction -->
+        <div class="legal-section">
+            <h2><span class="section-number">1</span> Agreement to Terms</h2>
+            <p>
+                Welcome to <strong>Image API</strong> ("Service," "we," "us," or "our"). These Terms of Service ("Terms") govern your access to and use of our image and PDF storage API service available at odede>imageapi.pythonanywhere.com</code>.
+            </p>
+            <p>
+                By accessing or using our Service, you agree to be bound by these Terms. If you disagree with any part of these Terms, you may not access the Service.
+            </p>
+            <div class="highlight-box">
+                <p><strong><i class="fas fa-info-circle"></i> Important:</strong> These Terms constitute a legally binding agreement between you and Image API. Please read them carefully before using our Service.</p>
+            </div>
+        </div>
+
+        <!-- Definitions -->
+        <div class="legal-section">
+            <h2><span class="section-number">2</span> Definitions</h2>
+            <ul>
+                <li><strong>"Service"</strong> refers to the Image API platform, including the web interface, REST API, and all related services.</li>
+                <li><strong>"User," "you," or "your"</strong> refers to the individual or legal entity accessing or using the Service.</li>
+                <li><strong>"API Key"</strong> refers to the unique authentication token provided to you for accessing the API.</li>
+                <li><strong>"Content"</strong> refers to images, PDFs, metadata, and any other files you upload to the Service.</li>
+                <li><strong>"Account"</strong> refers to your registered user account on the Service.</li>
+            </ul>
+        </div>
+
+        <!-- Account Registration -->
+        <div class="legal-section">
+            <h2><span class="section-number">3</span> Account Registration and Security</h2>
+            
+            <h3>3.1 Account Creation</h3>
+            <p>
+                To use our Service, you must create an account by providing accurate and complete information. You are responsible for maintaining the confidentiality of your account credentials, including your password and API key.
+            </p>
+            
+            <h3>3.2 Account Responsibilities</h3>
+            <ul>
+                <li>You must be at least 18 years old to create an account</li>
+                <li>You must provide accurate, current, and complete information</li>
+                <li>You must maintain and promptly update your account information</li>
+                <li>You are responsible for all activities that occur under your account</li>
+                <li>You must notify us immediately of any unauthorized access or security breach</li>
+            </ul>
+            
+            <h3>3.3 API Key Management</h3>
+            <p>
+                Your API key is confidential and should never be shared publicly or embedded in client-side code. You are solely responsible for maintaining the security of your API key. We are not liable for any loss or damage arising from unauthorized use of your API key.
+            </p>
+            
+            <div class="warning-box">
+                <p><strong><i class="fas fa-exclamation-triangle"></i> Security Warning:</strong> Never commit your API key to public repositories or share it publicly. Regenerate your key immediately if you suspect it has been compromised.</p>
+            </div>
+        </div>
+
+        <!-- License and Access -->
+        <div class="legal-section">
+            <h2><span class="section-number">4</span> License and Access Rights</h2>
+            
+            <h3>4.1 License Grant</h3>
+            <p>
+                Subject to your compliance with these Terms, we grant you a limited, non-exclusive, non-transferable, revocable license to access and use the Service solely for your lawful business or personal purposes.
+            </p>
+            
+            <h3>4.2 API Usage</h3>
+            <p>
+                You may access our API using your unique API key to:
+            </p>
+            <ul>
+                <li>Upload and store images (PNG, JPG, JPEG, GIF, WebP) and PDF files</li>
+                <li>Organize content into folders</li>
+                <li>Retrieve and manage your uploaded content</li>
+                <li>Search and filter your files</li>
+                <li>Extract metadata and text from files</li>
+            </ul>
+            
+            <h3>4.3 Restrictions</h3>
+            <p>You agree NOT to:</p>
+            <ul>
+                <li>Use the Service for any illegal or unauthorized purpose</li>
+                <li>Attempt to reverse engineer, decompile, or disassemble the Service</li>
+                <li>Circumvent or disable any security features of the Service</li>
+                <li>Use automated scripts or bots to access the Service excessively</li>
+                <li>Resell, sublicense, or redistribute access to the Service</li>
+                <li>Upload malicious files or content that violates third-party rights</li>
+                <li>Exceed rate limits without prior written permission</li>
+                <li>Use the Service to store or distribute spam, malware, or illegal content</li>
+            </ul>
+        </div>
+
+        <!-- Content and Ownership -->
+        <div class="legal-section">
+            <h2><span class="section-number">5</span> Content Ownership and Rights</h2>
+            
+            <h3>5.1 Your Content</h3>
+            <p>
+                You retain all ownership rights to the Content you upload to the Service. By uploading Content, you grant us a limited license to store, process, and deliver your Content solely for the purpose of providing the Service to you.
+            </p>
+            
+            <h3>5.2 Content Restrictions</h3>
+            <p>You agree not to upload Content that:</p>
+            <ul>
+                <li>Infringes on intellectual property rights of others</li>
+                <li>Contains malware, viruses, or malicious code</li>
+                <li>Is illegal, obscene, defamatory, or violates any law</li>
+                <li>Violates privacy rights or contains personal data without consent</li>
+                <li>Is pornographic, violent, or promotes hatred or discrimination</li>
+            </ul>
+            
+            <h3>5.3 Content Responsibility</h3>
+            <p>
+                You are solely responsible for your Content and the consequences of uploading it. We do not pre-screen Content but reserve the right to remove any Content that violates these Terms.
+            </p>
+            
+            <h3>5.4 Backup and Data Loss</h3>
+            <div class="warning-box">
+                <p><strong><i class="fas fa-exclamation-triangle"></i> Important:</strong> While we implement reasonable backup procedures, you are responsible for maintaining your own backups of Content. We are not liable for any data loss or corruption.</p>
+            </div>
+        </div>
+
+        <!-- Usage Limits and Fair Use -->
+        <div class="legal-section">
+            <h2><span class="section-number">6</span> Usage Limits and Fair Use Policy</h2>
+            
+            <h3>6.1 File Size Limits</h3>
+            <p>
+                Individual file uploads are limited to <strong>10MB per file</strong>. Files exceeding this limit will be rejected.
+            </p>
+            
+            <h3>6.2 Storage Limits</h3>
+            <p>
+                Free accounts have reasonable storage limits. We reserve the right to implement storage quotas or charge for excess usage with advance notice.
+            </p>
+            
+            <h3>6.3 Rate Limiting</h3>
+            <p>
+                API requests are subject to rate limiting to ensure fair usage and service stability. Excessive use may result in temporary throttling or account suspension.
+            </p>
+            
+            <h3>6.4 Fair Use</h3>
+            <p>
+                We expect users to use the Service reasonably. Abuse, excessive automated requests, or usage that degrades service quality for others may result in account termination.
+            </p>
+        </div>
+
+        <!-- Service Availability -->
+        <div class="legal-section">
+            <h2><span class="section-number">7</span> Service Availability and Modifications</h2>
+            
+            <h3>7.1 Service Availability</h3>
+            <p>
+                We strive to provide reliable service but do not guarantee uninterrupted or error-free access. The Service may be temporarily unavailable for maintenance, updates, or unforeseen issues.
+            </p>
+            
+            <h3>7.2 Modifications</h3>
+            <p>
+                We reserve the right to modify, suspend, or discontinue any part of the Service at any time with or without notice. We are not liable for any modification, suspension, or discontinuation of the Service.
+            </p>
+            
+            <h3>7.3 Updates to Terms</h3>
+            <p>
+                We may update these Terms from time to time. Continued use of the Service after changes constitutes acceptance of the updated Terms. Material changes will be communicated via email or through the Service.
+            </p>
+        </div>
+
+        <!-- Termination -->
+        <div class="legal-section">
+            <h2><span class="section-number">8</span> Termination</h2>
+            
+            <h3>8.1 Termination by You</h3>
+            <p>
+                You may terminate your account at any time by contacting us or using the account deletion feature. Upon termination, you will lose access to your Content.
+            </p>
+            
+            <h3>8.2 Termination by Us</h3>
+            <p>
+                We may suspend or terminate your account immediately, without prior notice, if you violate these Terms or engage in fraudulent, abusive, or illegal activity.
+            </p>
+            
+            <h3>8.3 Effect of Termination</h3>
+            <p>
+                Upon termination, your right to access the Service ceases immediately. We may delete your Content after termination, subject to our data retention policies and legal obligations.
+            </p>
+        </div>
+
+        <!-- Disclaimer of Warranties -->
+        <div class="legal-section">
+            <h2><span class="section-number">9</span> Disclaimer of Warranties</h2>
+            <div class="warning-box">
+                <p><strong>THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT.</strong></p>
+            </div>
+            <p>
+                We do not warrant that:
+            </p>
+            <ul>
+                <li>The Service will be uninterrupted, secure, or error-free</li>
+                <li>The results obtained from using the Service will be accurate or reliable</li>
+                <li>Any errors in the Service will be corrected</li>
+                <li>The Service will meet your specific requirements</li>
+            </ul>
+        </div>
+
+        <!-- Limitation of Liability -->
+        <div class="legal-section">
+            <h2><span class="section-number">10</span> Limitation of Liability</h2>
+            <div class="warning-box">
+                <p><strong>TO THE MAXIMUM EXTENT PERMITTED BY LAW, IMAGE API SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS OR REVENUES, WHETHER INCURRED DIRECTLY OR INDIRECTLY, OR ANY LOSS OF DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES.</strong></p>
+            </div>
+            <p>
+                Our total liability for any claims under these Terms shall not exceed the amount you paid us in the 12 months preceding the claim, or $100, whichever is greater.
+            </p>
+        </div>
+
+        <!-- Indemnification -->
+        <div class="legal-section">
+            <h2><span class="section-number">11</span> Indemnification</h2>
+            <p>
+                You agree to indemnify, defend, and hold harmless Image API, its officers, directors, employees, and agents from any claims, liabilities, damages, losses, and expenses, including legal fees, arising out of or in any way connected with:
+            </p>
+            <ul>
+                <li>Your access to or use of the Service</li>
+                <li>Your violation of these Terms</li>
+                <li>Your violation of any third-party rights, including intellectual property rights</li>
+                <li>Your Content</li>
+            </ul>
+        </div>
+
+        <!-- Governing Law -->
+        <div class="legal-section">
+            <h2><span class="section-number">12</span> Governing Law and Dispute Resolution</h2>
+            
+            <h3>12.1 Governing Law</h3>
+            <p>
+                These Terms shall be governed by and construed in accordance with the laws of [Your Jurisdiction], without regard to its conflict of law provisions.
+            </p>
+            
+            <h3>12.2 Dispute Resolution</h3>
+            <p>
+                Any disputes arising from these Terms or your use of the Service shall be resolved through good faith negotiations. If negotiations fail, disputes shall be resolved through binding arbitration or in the courts of [Your Jurisdiction].
+            </p>
+        </div>
+
+        <!-- Miscellaneous -->
+        <div class="legal-section">
+            <h2><span class="section-number">13</span> Miscellaneous</h2>
+            
+            <h3>13.1 Entire Agreement</h3>
+            <p>
+                These Terms constitute the entire agreement between you and Image API regarding the Service and supersede all prior agreements.
+            </p>
+            
+            <h3>13.2 Severability</h3>
+            <p>
+                If any provision of these Terms is found to be invalid or unenforceable, the remaining provisions shall remain in full force and effect.
+            </p>
+            
+            <h3>13.3 Waiver</h3>
+            <p>
+                No waiver of any term shall be deemed a further or continuing waiver of such term or any other term.
+            </p>
+            
+            <h3>13.4 Assignment</h3>
+            <p>
+                You may not assign or transfer these Terms without our prior written consent. We may assign these Terms without restriction.
+            </p>
+        </div>
+
+        <!-- Contact -->
+        <div class="contact-section">
+            <h3><i class="fas fa-envelope"></i> Questions About These Terms?</h3>
+            <p>
+                If you have any questions about these Terms of Service, please contact us at:<br>
+                <a href="https://prajwalpdf.pythonanywhere.com/contact">/contact</a>
+            </p>
+            <p style="margin-top: 1rem;">
+                <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    <i class="fas fa-home"></i> Back to Homepage
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,662 @@
+{% extends "base.html" %}
+
+{% block title %}Error {{ code }} - Image API{% endblock %}
+
+{% block extra_head %}
+<style>
+    .error-page {
+        min-height: calc(100vh - 200px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+    }
+    
+    .error-container {
+        max-width: 800px;
+        width: 100%;
+        text-align: center;
+    }
+    
+    /* Error Animation */
+    .error-illustration {
+        margin-bottom: 3rem;
+        position: relative;
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-20px);
+        }
+    }
+    
+    .error-icon-wrapper {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.1));
+        border: 2px solid rgba(239, 68, 68, 0.2);
+        margin-bottom: 2rem;
+        position: relative;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+    
+    .error-icon-wrapper::before {
+        content: '';
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        bottom: -10px;
+        left: -10px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.05), rgba(245, 158, 11, 0.05));
+        z-index: -1;
+        animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: scale(1.1);
+            opacity: 0.5;
+        }
+    }
+    
+    .error-icon {
+        font-size: 6rem;
+        background: linear-gradient(135deg, #ef4444, #f59e0b);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: shake 0.5s ease-in-out;
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+        20%, 40%, 60%, 80% { transform: translateX(10px); }
+    }
+    
+    /* Error Code */
+    .error-code {
+        font-size: 8rem;
+        font-weight: 900;
+        line-height: 1;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #ef4444, #f59e0b);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: -0.05em;
+        animation: fadeInDown 0.6s ease-out;
+    }
+    
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Error Message */
+    .error-message {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        animation: fadeInUp 0.6s ease-out 0.2s both;
+    }
+    
+    .error-description {
+        font-size: 1.1rem;
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin: 0 auto 2rem;
+        line-height: 1.7;
+        animation: fadeInUp 0.6s ease-out 0.4s both;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Error Details Box */
+    .error-details {
+        padding: 2rem;
+        border-radius: var(--radius-lg);
+        background: rgba(239, 68, 68, 0.05);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        margin-bottom: 2rem;
+        animation: fadeInUp 0.6s ease-out 0.6s both;
+    }
+    
+    .error-details-title {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #ef4444;
+        margin-bottom: 1rem;
+    }
+    
+    .error-details-title i {
+        font-size: 1.25rem;
+    }
+    
+    .error-details-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        text-align: left;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    .error-details-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 0.75rem;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: var(--radius-md);
+        margin-bottom: 0.75rem;
+        transition: all var(--transition-fast);
+    }
+    
+    .error-details-list li:hover {
+        background: rgba(0, 0, 0, 0.3);
+        transform: translateX(5px);
+    }
+    
+    .error-details-list li i {
+        color: #f59e0b;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+        margin-top: 0.2rem;
+    }
+    
+    .error-details-list li span {
+        color: var(--text-secondary);
+        line-height: 1.6;
+    }
+    
+    /* Action Buttons */
+    .error-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        animation: fadeInUp 0.6s ease-out 0.8s both;
+    }
+    
+    .error-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 2rem;
+        border-radius: var(--radius-md);
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all var(--transition-fast);
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .error-btn-primary {
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        color: white;
+        box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+    }
+    
+    .error-btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(59, 130, 246, 0.5);
+    }
+    
+    .error-btn-secondary {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-primary);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .error-btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-3px);
+    }
+    
+    .error-btn i {
+        font-size: 1.2rem;
+    }
+    
+    /* Quick Links */
+    .quick-links {
+        margin-top: 3rem;
+        animation: fadeInUp 0.6s ease-out 1s both;
+    }
+    
+    .quick-links-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--text-muted);
+    }
+    
+    .quick-links-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .quick-link-card {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.5rem;
+        border-radius: var(--radius-md);
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        transition: all var(--transition-fast);
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .quick-link-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(59, 130, 246, 0.3);
+        transform: translateX(5px);
+    }
+    
+    .quick-link-icon {
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--radius-md);
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+        font-size: 1.25rem;
+        color: #3b82f6;
+        flex-shrink: 0;
+    }
+    
+    .quick-link-content {
+        flex: 1;
+        text-align: left;
+    }
+    
+    .quick-link-title {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+    
+    .quick-link-description {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+    
+    .quick-link-arrow {
+        font-size: 1.2rem;
+        color: var(--text-muted);
+        transition: all var(--transition-fast);
+    }
+    
+    .quick-link-card:hover .quick-link-arrow {
+        color: #3b82f6;
+        transform: translateX(5px);
+    }
+    
+    /* Support Info */
+    .support-info {
+        margin-top: 3rem;
+        padding: 2rem;
+        border-radius: var(--radius-lg);
+        background: rgba(59, 130, 246, 0.05);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        animation: fadeInUp 0.6s ease-out 1.2s both;
+    }
+    
+    .support-icon {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+        font-size: 2rem;
+        color: #3b82f6;
+    }
+    
+    .support-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    .support-text {
+        color: var(--text-secondary);
+        margin-bottom: 0;
+    }
+    
+    /* Responsive */
+    @media (min-width: 640px) {
+        .error-code {
+            font-size: 10rem;
+        }
+        
+        .quick-links-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (min-width: 768px) {
+        .error-icon-wrapper {
+            width: 250px;
+            height: 250px;
+        }
+        
+        .error-icon {
+            font-size: 8rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="error-page">
+    <div class="error-container">
+        <!-- Error Illustration -->
+        <div class="error-illustration">
+            <div class="error-icon-wrapper">
+                {% if code == 400 %}
+                    <i class="fas fa-exclamation-triangle error-icon"></i>
+                {% elif code == 401 %}
+                    <i class="fas fa-lock error-icon"></i>
+                {% elif code == 403 %}
+                    <i class="fas fa-ban error-icon"></i>
+                {% elif code == 404 %}
+                    <i class="fas fa-search error-icon"></i>
+                {% elif code == 413 %}
+                    <i class="fas fa-file-upload error-icon"></i>
+                {% elif code == 429 %}
+                    <i class="fas fa-clock error-icon"></i>
+                {% elif code == 500 %}
+                    <i class="fas fa-server error-icon"></i>
+                {% else %}
+                    <i class="fas fa-exclamation-circle error-icon"></i>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Error Code -->
+        <h1 class="error-code">{{ code }}</h1>
+
+        <!-- Error Message -->
+        <h2 class="error-message">{{ message }}</h2>
+
+        <!-- Error Description -->
+        <p class="error-description">
+            {% if code == 400 %}
+                The request you made is invalid or malformed. Please check your input and try again.
+            {% elif code == 401 %}
+                You need to be authenticated to access this resource. Please log in and try again.
+            {% elif code == 403 %}
+                You don't have permission to access this resource. Contact support if you believe this is an error.
+            {% elif code == 404 %}
+                The page or resource you're looking for doesn't exist. It might have been moved or deleted.
+            {% elif code == 413 %}
+                The file you're trying to upload is too large. Maximum file size is 10MB.
+            {% elif code == 429 %}
+                You've made too many requests in a short time. Please wait a moment and try again.
+            {% elif code == 500 %}
+                Something went wrong on our end. Our team has been notified and is working on a fix.
+            {% else %}
+                An unexpected error occurred. Please try again later or contact support if the problem persists.
+            {% endif %}
+        </p>
+
+        <!-- Error Details -->
+        <div class="error-details glass-effect">
+            <h3 class="error-details-title">
+                <i class="fas fa-info-circle"></i>
+                What you can do
+            </h3>
+            <ul class="error-details-list">
+                {% if code == 400 %}
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Double-check your input for any errors or typos</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Ensure all required fields are filled out correctly</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Review the API documentation for proper request format</span>
+                    </li>
+                {% elif code == 401 %}
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Log in to your account to continue</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Check that your API key is valid and included in the request</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Regenerate your API key if you think it's been compromised</span>
+                    </li>
+                {% elif code == 403 %}
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Verify that you have the necessary permissions</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Contact the resource owner for access</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Check if your account has been restricted</span>
+                    </li>
+                {% elif code == 404 %}
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Check the URL for any typos or errors</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Return to the homepage and navigate from there</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Use the search feature to find what you're looking for</span>
+                    </li>
+                {% elif code == 413 %}
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Compress your file to reduce its size</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Split large files into smaller parts</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Check the file size limit in our documentation</span>
+                    </li>
+                {% elif code == 429 %}
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Wait a few minutes before making more requests</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Review our rate limiting policy in the documentation</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Implement request throttling in your application</span>
+                    </li>
+                {% elif code == 500 %}
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Try refreshing the page after a few moments</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Check our status page for any ongoing issues</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Contact support if the problem persists</span>
+                    </li>
+                {% else %}
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Refresh the page and try again</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Clear your browser cache and cookies</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Contact our support team for assistance</span>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="error-actions">
+            <a href="{{ url_for('index') }}" class="error-btn error-btn-primary">
+                <i class="fas fa-home"></i>
+                <span>Back to Home</span>
+            </a>
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('dashboard') }}" class="error-btn error-btn-secondary">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Go to Dashboard</span>
+                </a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="error-btn error-btn-secondary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Login</span>
+                </a>
+            {% endif %}
+        </div>
+
+        <!-- Quick Links -->
+        <div class="quick-links">
+            <h3 class="quick-links-title">Quick Links</h3>
+            <div class="quick-links-grid">
+                <a href="{{ url_for('docs') }}" class="quick-link-card glass-effect">
+                    <div class="quick-link-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="quick-link-content">
+                        <div class="quick-link-title">Documentation</div>
+                        <div class="quick-link-description">API guides and tutorials</div>
+                    </div>
+                    <i class="fas fa-arrow-right quick-link-arrow"></i>
+                </a>
+
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('folders') }}" class="quick-link-card glass-effect">
+                        <div class="quick-link-icon">
+                            <i class="fas fa-folder"></i>
+                        </div>
+                        <div class="quick-link-content">
+                            <div class="quick-link-title">My Folders</div>
+                            <div class="quick-link-description">Manage your files</div>
+                        </div>
+                        <i class="fas fa-arrow-right quick-link-arrow"></i>
+                    </a>
+
+                    <a href="{{ url_for('settings') }}" class="quick-link-card glass-effect">
+                        <div class="quick-link-icon">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                        <div class="quick-link-content">
+                            <div class="quick-link-title">Settings</div>
+                            <div class="quick-link-description">Account & API keys</div>
+                        </div>
+                        <i class="fas fa-arrow-right quick-link-arrow"></i>
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('register') }}" class="quick-link-card glass-effect">
+                        <div class="quick-link-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="quick-link-content">
+                            <div class="quick-link-title">Sign Up</div>
+                            <div class="quick-link-description">Create free account</div>
+                        </div>
+                        <i class="fas fa-arrow-right quick-link-arrow"></i>
+                    </a>
+                {% endif %}
+
+                <a href="{{ url_for('index') }}" class="quick-link-card glass-effect">
+                    <div class="quick-link-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <div class="quick-link-content">
+                        <div class="quick-link-title">About</div>
+                        <div class="quick-link-description">Learn more about us</div>
+                    </div>
+                    <i class="fas fa-arrow-right quick-link-arrow"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Support Info -->
+        <div class="support-info glass-effect">
+            <div class="support-icon">
+                <i class="fas fa-life-ring"></i>
+            </div>
+            <h3 class="support-title">Need More Help?</h3>
+            <p class="support-text">
+                If you continue to experience issues, our support team is here to help. 
+                Check our documentation or contact us for assistance.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

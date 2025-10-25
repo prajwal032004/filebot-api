@@ -1,0 +1,1485 @@
+{% extends "base.html" %} {% block title %}Welcome - Professional Image & PDF
+API{% endblock %} {% block description %}Store, organize, and serve images and
+PDFs with a powerful RESTful API. Secure authentication, folder organization,
+and comprehensive endpoints for developers.{% endblock %} {% block extra_head %}
+<style>
+  /* Index Page Styles */
+  .index-page {
+    width: 100%;
+  }
+
+  /* Hero Section */
+  .hero-section {
+    padding: 4rem 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .hero-content {
+    text-align: center;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-full);
+    margin-bottom: 2rem;
+    font-size: 0.85rem;
+    animation: fadeInDown 0.6s ease-out;
+  }
+
+  .badge-icon {
+    font-size: 0.9rem;
+    color: #10b981;
+  }
+
+  .hero-title {
+    font-size: 3rem;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    animation: fadeInUp 0.6s ease-out 0.2s both;
+  }
+
+  .hero-description {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    max-width: 700px;
+    margin: 0 auto 2rem;
+    line-height: 1.7;
+    animation: fadeInUp 0.6s ease-out 0.4s both;
+  }
+
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    padding: 1.5rem 2rem;
+    border-radius: var(--radius-lg);
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    animation: fadeInUp 0.6s ease-out 0.6s both;
+  }
+
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .stat-icon {
+    font-size: 2rem;
+    color: #3b82f6;
+  }
+
+  .stat-content {
+    text-align: left;
+  }
+
+  .stat-number {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .stat-divider {
+    width: 1px;
+    height: 40px;
+    background: var(--glass-border);
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+    animation: fadeInUp 0.6s ease-out 0.8s both;
+  }
+
+  .hero-trust {
+    animation: fadeInUp 0.6s ease-out 1s both;
+  }
+
+  .trust-text {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .trust-badges {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-full);
+    font-size: 0.85rem;
+  }
+
+  .trust-badge i {
+    font-size: 1rem;
+  }
+
+  .hero-visual {
+    animation: fadeInRight 0.8s ease-out 0.4s both;
+  }
+
+  .code-window {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .code-window-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid var(--glass-border);
+  }
+
+  .window-controls {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .control-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .dot-red {
+    background: #ef4444;
+  }
+
+  .dot-yellow {
+    background: #f59e0b;
+  }
+
+  .dot-green {
+    background: #10b981;
+  }
+
+  .window-title {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-family: "Courier New", monospace;
+  }
+
+  .code-window-body {
+    padding: 1.5rem;
+    background: rgba(0, 0, 0, 0.4);
+  }
+
+  .code-snippet {
+    font-family: "Courier New", monospace;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: #e0e0e0;
+    margin: 0;
+  }
+
+  .code-keyword {
+    color: #8b5cf6;
+  }
+
+  .code-variable {
+    color: #3b82f6;
+  }
+
+  .code-string {
+    color: #10b981;
+  }
+
+  .code-comment {
+    color: #6b7280;
+  }
+
+  .code-function {
+    color: #f59e0b;
+  }
+
+  /* Features Section */
+  .features-section {
+    padding: 4rem 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .section-title {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .section-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .feature-card {
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-normal);
+  }
+
+  .feature-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .feature-icon {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    font-size: 2rem;
+    background: linear-gradient(
+      135deg,
+      rgba(59, 130, 246, 0.1),
+      rgba(139, 92, 246, 0.1)
+    );
+  }
+
+  .feature-title {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+
+  .feature-description {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  .feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .feature-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-secondary);
+  }
+
+  .feature-list li i {
+    color: #10b981;
+    font-size: 1rem;
+  }
+
+  /* How It Works */
+  .how-it-works-section {
+    padding: 4rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .steps-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .step-card {
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+  }
+
+  .step-number {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .step-content {
+    flex: 1;
+  }
+
+  .step-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .step-description {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+
+  .step-code {
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  .step-code code {
+    font-family: "Courier New", monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .step-divider {
+    text-align: center;
+    color: var(--text-muted);
+  }
+
+  .step-divider i {
+    font-size: 2rem;
+  }
+
+  /* Use Cases */
+  .use-cases-section {
+    padding: 4rem 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .use-cases-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .use-case-card {
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    text-align: center;
+    transition: all var(--transition-normal);
+  }
+
+  .use-case-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .use-case-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .use-case-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .use-case-description {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+
+  /* CTA Section */
+  .cta-section {
+    padding: 4rem 2rem;
+    margin: 4rem 2rem 2rem;
+    border-radius: var(--radius-xl);
+    text-align: center;
+  }
+
+  .cta-content {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .cta-title {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .cta-description {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* Animations */
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInRight {
+    from {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* Responsive */
+  @media (min-width: 768px) {
+    .features-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .use-cases-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero-section {
+      grid-template-columns: 1fr 1fr;
+      text-align: left;
+    }
+
+    .hero-content {
+      text-align: left;
+    }
+
+    .hero-cta {
+      justify-content: flex-start;
+    }
+
+    .hero-trust {
+      text-align: left;
+    }
+
+    .trust-badges {
+      justify-content: flex-start;
+    }
+
+    .features-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .use-cases-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* ============================================
+   ENHANCED MOBILE RESPONSIVE STYLES
+   ============================================ */
+
+  /* Base responsive improvements */
+  @media (max-width: 767px) {
+    /* Hero Section Mobile */
+    .hero-section {
+      padding: 2rem 1rem;
+      gap: 2rem;
+    }
+
+    .hero-badge {
+      font-size: 0.75rem;
+      padding: 0.4rem 0.8rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title {
+      font-size: 1.75rem;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    .hero-description {
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      padding: 0 0.5rem;
+    }
+
+    /* Stats Mobile */
+    .hero-stats {
+      flex-direction: column;
+      padding: 1rem;
+      gap: 1rem;
+    }
+
+    .stat-item {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .stat-divider {
+      display: none;
+    }
+
+    .stat-icon {
+      font-size: 1.5rem;
+    }
+
+    .stat-number {
+      font-size: 1.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+    }
+
+    /* CTA Buttons Mobile */
+    .hero-cta {
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+      padding: 0 0.5rem;
+    }
+
+    .hero-cta .btn {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn-large {
+      padding: 0.875rem 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    /* Trust Badges Mobile */
+    .trust-text {
+      font-size: 0.85rem;
+    }
+
+    .trust-badges {
+      flex-direction: column;
+      gap: 0.5rem;
+      width: 100%;
+    }
+
+    .trust-badge {
+      width: 100%;
+      justify-content: center;
+      font-size: 0.8rem;
+      padding: 0.6rem 1rem;
+    }
+
+    /* Code Window Mobile */
+    .code-window {
+      margin: 0 -0.5rem;
+    }
+
+    .code-window-header {
+      padding: 0.75rem 1rem;
+    }
+
+    .window-title {
+      font-size: 0.75rem;
+    }
+
+    .control-dot {
+      width: 10px;
+      height: 10px;
+    }
+
+    .code-window-body {
+      padding: 1rem;
+      overflow-x: auto;
+    }
+
+    .code-snippet {
+      font-size: 0.75rem;
+      line-height: 1.5;
+    }
+
+    /* Section Headers Mobile */
+    .section-header {
+      margin-bottom: 2rem;
+      padding: 0 0.5rem;
+    }
+
+    .section-title {
+      font-size: 1.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-subtitle {
+      font-size: 0.95rem;
+      padding: 0 0.5rem;
+    }
+
+    /* Features Section Mobile */
+    .features-section {
+      padding: 3rem 1rem;
+    }
+
+    .features-grid {
+      gap: 1rem;
+    }
+
+    .feature-card {
+      padding: 1.5rem;
+    }
+
+    .feature-icon {
+      width: 50px;
+      height: 50px;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-title {
+      font-size: 1.1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .feature-description {
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-list li {
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* How It Works Mobile */
+    .how-it-works-section {
+      padding: 3rem 1rem;
+    }
+
+    .step-card {
+      padding: 1.5rem;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .step-number {
+      width: 50px;
+      height: 50px;
+      font-size: 1.5rem;
+      margin: 0 auto;
+    }
+
+    .step-content {
+      text-align: center;
+    }
+
+    .step-title {
+      font-size: 1.2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .step-description {
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .step-code {
+      text-align: left;
+      overflow-x: auto;
+    }
+
+    .step-code code {
+      font-size: 0.75rem;
+    }
+
+    .step-divider {
+      margin: 0.5rem 0;
+    }
+
+    .step-divider i {
+      font-size: 1.5rem;
+    }
+
+    /* Use Cases Mobile */
+    .use-cases-section {
+      padding: 3rem 1rem;
+    }
+
+    .use-cases-grid {
+      gap: 1rem;
+    }
+
+    .use-case-card {
+      padding: 1.5rem;
+    }
+
+    .use-case-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .use-case-title {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .use-case-description {
+      font-size: 0.85rem;
+    }
+
+    /* CTA Section Mobile */
+    .cta-section {
+      padding: 2.5rem 1rem;
+      margin: 2rem 1rem 1rem;
+    }
+
+    .cta-title {
+      font-size: 1.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .cta-description {
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+      padding: 0 0.5rem;
+    }
+
+    .cta-buttons {
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+      padding: 0 0.5rem;
+    }
+
+    .cta-buttons .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  /* Small mobile devices (320px - 480px) */
+  @media (max-width: 480px) {
+    .hero-title {
+      font-size: 1.5rem;
+    }
+
+    .hero-description {
+      font-size: 0.9rem;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+    }
+
+    .section-subtitle {
+      font-size: 0.875rem;
+    }
+
+    .code-snippet {
+      font-size: 0.7rem;
+    }
+
+    .feature-card,
+    .step-card,
+    .use-case-card {
+      padding: 1.25rem;
+    }
+  }
+
+  /* Tablet Portrait (768px - 1023px) */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .hero-section {
+      padding: 3rem 2rem;
+      gap: 3rem;
+    }
+
+    .hero-title {
+      font-size: 2.25rem;
+    }
+
+    .hero-description {
+      font-size: 1.1rem;
+    }
+
+    .hero-stats {
+      flex-direction: row;
+      padding: 1.25rem 1.5rem;
+    }
+
+    .stat-divider {
+      display: block;
+    }
+
+    .features-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .use-cases-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .step-card {
+      flex-direction: row;
+      text-align: left;
+    }
+
+    .step-content {
+      text-align: left;
+    }
+  }
+
+  /* Touch device improvements */
+  @media (hover: none) and (pointer: coarse) {
+    .feature-card,
+    .use-case-card,
+    .step-card {
+      transition: none;
+    }
+
+    .feature-card:active,
+    .use-case-card:active {
+      transform: scale(0.98);
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .quick-action:active,
+    .trust-badge:active {
+      opacity: 0.8;
+    }
+  }
+
+  /* Prevent text selection on buttons and interactive elements */
+  .btn,
+  .trust-badge,
+  .stat-item,
+  .feature-icon,
+  .use-case-icon,
+  .step-number {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Improve touch targets */
+  @media (max-width: 767px) {
+    .btn,
+    a,
+    button {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+
+  /* Optimize animations for mobile */
+  @media (max-width: 767px) {
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInRight {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+  }
+
+  /* Improve scrolling on mobile */
+  html {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Better text rendering on mobile */
+  @media (max-width: 767px) {
+    body {
+      -webkit-text-size-adjust: 100%;
+      -moz-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+  }
+
+  /* Safe area for devices with notches */
+  @supports (padding: max(0px)) {
+    .hero-section,
+    .features-section,
+    .how-it-works-section,
+    .use-cases-section,
+    .cta-section {
+      padding-left: max(1rem, env(safe-area-inset-left));
+      padding-right: max(1rem, env(safe-area-inset-right));
+    }
+  }
+
+  /* Landscape mode optimization */
+  @media (max-width: 767px) and (orientation: landscape) {
+    .hero-section {
+      padding: 2rem 1rem;
+    }
+
+    .hero-title {
+      font-size: 1.5rem;
+    }
+
+    .hero-stats {
+      padding: 0.75rem 1rem;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+    }
+  }
+
+  /* Fix for small height devices */
+  @media (max-height: 600px) and (max-width: 767px) {
+    .hero-section,
+    .features-section,
+    .how-it-works-section,
+    .use-cases-section {
+      padding-top: 2rem;
+      padding-bottom: 2rem;
+    }
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="index-page">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-badge glass-effect">
+        <i class="fas fa-circle-check badge-icon"></i>
+        <span>Hosted 24/7 on PythonAnywhere</span>
+      </div>
+
+      <h1 class="hero-title">
+        Store & Serve Files
+        <span class="gradient-text">Through a Powerful API</span>
+      </h1>
+
+      <p class="hero-description">
+        Professional image and PDF storage service with RESTful API endpoints.
+        Organize files in folders, manage metadata, and access everything
+        through secure API keys. Built with Flask, hosted on
+        imageapi.pythonanywhere.com.
+      </p>
+
+      <div class="hero-stats glass-effect">
+        <div class="stat-item">
+          <i class="fas fa-dollar-sign stat-icon"></i>
+          <div class="stat-content">
+            <span class="stat-number">Free</span>
+            <span class="stat-label">Forever Plan</span>
+          </div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <i class="fas fa-chart-line stat-icon"></i>
+          <div class="stat-content">
+            <span class="stat-number">Real-Time</span>
+            <span class="stat-label">Analytics</span>
+          </div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <i class="fas fa-headset stat-icon"></i>
+          <div class="stat-content">
+            <span class="stat-number">24/7</span>
+            <span class="stat-label">Support</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-cta">
+        {% if current_user.is_authenticated %}
+        <a
+          href="{{ url_for('dashboard') }}"
+          class="btn btn-primary btn-large btn-glow"
+        >
+          <i class="fas fa-chart-line"></i>
+          <span>Go to Dashboard</span>
+        </a>
+        <a
+          href="https://apifetch.pythonanywhere.com/"
+          class="btn btn-secondary btn-large"
+        >
+          <i class="fas fa-book"></i>
+          <span>Use This Website</span>
+        </a>
+        {% else %}
+        <a
+          href="{{ url_for('register') }}"
+          class="btn btn-primary btn-large btn-glow"
+        >
+          <i class="fas fa-rocket"></i>
+          <span>Create Free Account</span>
+        </a>
+        <a href="{{ url_for('docs') }}" class="btn btn-secondary btn-large">
+          <i class="fas fa-book"></i>
+          <span>Explore Documentation</span>
+        </a>
+        {% endif %}
+      </div>
+
+      <div class="hero-trust">
+        <p class="trust-text">Trusted by developers worldwide</p>
+        <div class="trust-badges">
+          <span class="trust-badge glass-effect">
+            <i class="fas fa-star" style="color: #fbbf24"></i>
+            99% Satisfaction
+          </span>
+          <span class="trust-badge glass-effect">
+            <i class="fas fa-shield-alt" style="color: #10b981"></i>
+            Secure & Private
+          </span>
+          <span class="trust-badge glass-effect">
+            <i class="fas fa-check-circle" style="color: #3b82f6"></i>
+            Free Forever
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="code-window glass-effect">
+        <div class="code-window-header">
+          <div class="window-controls">
+            <span class="control-dot dot-red"></span>
+            <span class="control-dot dot-yellow"></span>
+            <span class="control-dot dot-green"></span>
+          </div>
+          <span class="window-title">api_example.py</span>
+        </div>
+        <div class="code-window-body">
+          <pre
+            class="code-snippet"
+          ><code><span class="code-keyword">import</span> requests
+
+<span class="code-comment"># Initialize API client</span>
+<span class="code-variable">API_KEY</span> = <span class="code-string">"your_api_key_here"</span>
+<span class="code-variable">BASE_URL</span> = <span class="code-string">"https://imageapi.pythonanywhere.com"</span>
+
+<span class="code-comment"># Get all folders</span>
+<span class="code-variable">response</span> = requests.<span class="code-function">get</span>(
+    <span class="code-string">f"<span class="code-variable">{BASE_URL}</span>/api/folders"</span>,
+    <span class="code-keyword">headers</span>={<span class="code-string">"X-API-Key"</span>: <span class="code-variable">API_KEY</span>}
+)
+
+<span class="code-variable">folders</span> = response.<span class="code-function">json</span>()
+<span class="code-keyword">print</span>(<span class="code-string">f"Found <span class="code-variable">{len(folders['data'])}</span> folders"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <div class="section-header">
+      <h2 class="section-title">Why Choose Image API?</h2>
+      <p class="section-subtitle">
+        Everything you need to store, organize, and serve files through a
+        professional API
+      </p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card glass-effect">
+        <div class="feature-icon">
+          <i class="fas fa-folder-open"></i>
+        </div>
+        <h3 class="feature-title">Folder Organization</h3>
+        <p class="feature-description">
+          Create unlimited folders to organize your images and PDFs. Set folders
+          to public or private, and manage permissions with ease.
+        </p>
+        <ul class="feature-list">
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>Unlimited folders</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>Public/private visibility</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>Nested organization</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="feature-card glass-effect">
+        <div class="feature-icon">
+          <i class="fas fa-chart-bar"></i>
+        </div>
+        <h3 class="feature-title">Automatic Metadata</h3>
+        <p class="feature-description">
+          Get automatic metadata extraction for uploaded files including
+          dimensions, file size, page count for PDFs, and upload timestamps.
+        </p>
+        <ul class="feature-list">
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>Image dimensions</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>File size calculation</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>PDF page count</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="feature-card glass-effect">
+        <div class="feature-icon">
+          <i class="fas fa-code"></i>
+        </div>
+        <h3 class="feature-title">RESTful API</h3>
+        <p class="feature-description">
+          Clean, documented RESTful endpoints with JSON responses. Perfect for
+          integration with any programming language or framework.
+        </p>
+        <ul class="feature-list">
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>JSON responses</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>Clear error messages</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>HTTP status codes</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="feature-card glass-effect">
+        <div class="feature-icon">
+          <i class="fas fa-lock"></i>
+        </div>
+        <h3 class="feature-title">Secure Authentication</h3>
+        <p class="feature-description">
+          Each user gets a unique API key for secure access. Keys can be
+          regenerated anytime, and all requests are validated and rate-limited.
+        </p>
+        <ul class="feature-list">
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>Unique API keys</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>Key regeneration</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>Rate limiting</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="feature-card glass-effect">
+        <div class="feature-icon">
+          <i class="fas fa-cloud-upload-alt"></i>
+        </div>
+        <h3 class="feature-title">Fast Upload & Retrieval</h3>
+        <p class="feature-description">
+          Upload files up to 10MB with automatic validation. Retrieve files
+          instantly with direct URLs or through API endpoints.
+        </p>
+        <ul class="feature-list">
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>10MB file limit</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>Direct file URLs</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>Format validation</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="feature-card glass-effect">
+        <div class="feature-icon">
+          <i class="fas fa-search"></i>
+        </div>
+        <h3 class="feature-title">Search & Filter</h3>
+        <p class="feature-description">
+          Powerful search functionality to find files by name, description, or
+          metadata. Filter by file type, date, or folder.
+        </p>
+        <ul class="feature-list">
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>Full-text search</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>Type filtering</span>
+          </li>
+          <li>
+            <i class="fas fa-check-circle"></i>
+            <span>Date range queries</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works-section">
+    <div class="section-header">
+      <h2 class="section-title">How It Works</h2>
+      <p class="section-subtitle">
+        Get started in minutes with our simple three-step process
+      </p>
+    </div>
+
+    <div class="steps-container">
+      <div class="step-card glass-effect">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h3 class="step-title">Create Account & Get API Key</h3>
+          <p class="step-description">
+            Sign up with your email and password. Once registered, you'll
+            immediately receive a unique API key that you can use to
+            authenticate all your requests. You can view and regenerate your API
+            key anytime from the Settings page.
+          </p>
+          <div class="step-code glass-effect">
+            <pre><code><span class="code-comment"># Your unique API key</span>
+<span class="code-variable">X-API-Key</span>: abc123def456ghi789jkl</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-divider">
+        <i class="fas fa-arrow-down"></i>
+      </div>
+
+      <div class="step-card glass-effect">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h3 class="step-title">Create Folders & Upload Files</h3>
+          <p class="step-description">
+            Organize your files by creating folders through the web interface or
+            API. Upload images (PNG, JPG, JPEG, GIF, WebP) and PDFs up to 10MB.
+            Each file automatically gets metadata extracted including
+            dimensions, size, and more.
+          </p>
+          <div class="step-code glass-effect">
+            <pre><code><span class="code-comment"># Create a folder</span>
+POST /api/folders
+{<span class="code-string">"name"</span>: <span class="code-string">"Product Images"</span>}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-divider">
+        <i class="fas fa-arrow-down"></i>
+      </div>
+
+      <div class="step-card glass-effect">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h3 class="step-title">Access via API</h3>
+          <p class="step-description">
+            Use our comprehensive API endpoints to retrieve files, search
+            content, extract PDF text, and manage your data. All endpoints
+            return clean JSON responses with proper HTTP status codes and
+            detailed error messages.
+          </p>
+          <div class="step-code glass-effect">
+            <pre><code><span class="code-comment"># Get folder images</span>
+GET /api/folder/{id}/images
+→ Returns JSON with file URLs</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Use Cases Section -->
+  <section class="use-cases-section">
+    <div class="section-header">
+      <h2 class="section-title">Perfect For</h2>
+      <p class="section-subtitle">
+        Developers building applications that need reliable file storage
+      </p>
+    </div>
+
+    <div class="use-cases-grid">
+      <div class="use-case-card glass-effect">
+        <div class="use-case-icon"><i class="fas fa-palette"></i></div>
+        <h3 class="use-case-title">Portfolio Websites</h3>
+        <p class="use-case-description">
+          Store and serve portfolio images with automatic optimization and
+          metadata
+        </p>
+      </div>
+
+      <div class="use-case-card glass-effect">
+        <div class="use-case-icon"><i class="fas fa-shopping-cart"></i></div>
+        <h3 class="use-case-title">E-commerce Platforms</h3>
+        <p class="use-case-description">
+          Manage product images and documentation PDFs with folder organization
+        </p>
+      </div>
+
+      <div class="use-case-card glass-effect">
+        <div class="use-case-icon"><i class="fas fa-mobile-alt"></i></div>
+        <h3 class="use-case-title">Mobile Apps</h3>
+        <p class="use-case-description">
+          Backend storage for user-uploaded photos and documents
+        </p>
+      </div>
+
+      <div class="use-case-card glass-effect">
+        <div class="use-case-icon"><i class="fas fa-book-open"></i></div>
+        <h3 class="use-case-title">Documentation Sites</h3>
+        <p class="use-case-description">
+          Host diagrams, screenshots, and PDF guides with search capability
+        </p>
+      </div>
+
+      <div class="use-case-card glass-effect">
+        <div class="use-case-icon"><i class="fas fa-graduation-cap"></i></div>
+        <h3 class="use-case-title">Educational Platforms</h3>
+        <p class="use-case-description">
+          Store course materials, lecture slides, and student submissions
+        </p>
+      </div>
+
+      <div class="use-case-card glass-effect">
+        <div class="use-case-icon"><i class="fas fa-briefcase"></i></div>
+        <h3 class="use-case-title">Business Tools</h3>
+        <p class="use-case-description">
+          Organize company assets, invoices, and marketing materials
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section glass-effect">
+    <div class="cta-content">
+      <h2 class="cta-title">Ready to Get Started?</h2>
+      <p class="cta-description">
+        Create your free account now and get your API key instantly. No credit
+        card required.
+      </p>
+      <div class="cta-buttons">
+        {% if not current_user.is_authenticated %}
+        <a
+          href="{{ url_for('register') }}"
+          class="btn btn-primary btn-large btn-glow"
+        >
+          <i class="fas fa-rocket"></i>
+          <span>Create Free Account</span>
+          <i class="fas fa-arrow-right"></i>
+        </a>
+        {% else %}
+        <a
+          href="{{ url_for('dashboard') }}"
+          class="btn btn-primary btn-large btn-glow"
+        >
+          <i class="fas fa-chart-line"></i>
+          <span>Go to Dashboard</span>
+          <i class="fas fa-arrow-right"></i>
+        </a>
+        {% endif %}
+        <a href="{{ url_for('docs') }}" class="btn btn-secondary btn-large">
+          <i class="fas fa-book"></i>
+          <span>View Documentation</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

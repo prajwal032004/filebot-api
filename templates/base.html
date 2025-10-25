@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="theme-color" content="#0f172a">
+
+    <!-- SEO Meta Tags -->
+    <title>{% block title %}Image & PDF API{% endblock %} - imageapi.pythonanywhere.com</title>
+    <meta name="description"
+        content="{% block description %}Professional image and PDF storage API with folder organization, secure authentication, and powerful RESTful endpoints{% endblock %}">
+    <meta name="keywords" content="image api, pdf api, file storage, rest api, flask api, python api">
+    <meta name="author" content="Prajwal A B">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="{% block og_title %}Image & PDF API - Professional File Storage{% endblock %}">
+    <meta property="og:description" content="Store, organize, and serve images & PDFs with a powerful RESTful API">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://imageapi.pythonanywhere.com">
+    <meta property="og:site_name" content="Image API">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Image & PDF API">
+    <meta name="twitter:description" content="Professional file storage with RESTful API">
+    <meta name="google-site-verification" content="2SS8VhyWNM9iG9iKxuAhMT_PkqVKJkS5fTs_HXs761Y" />
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Image API">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.png') }}">
+
+    <!-- Font Awesome 6.5.1 - MUST BE BEFORE CSP -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- Security Headers - UPDATED TO ALLOW FONT AWESOME -->
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline'; connect-src 'self'; base-uri 'self'; form-action 'self';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body class="theme-dark">
+    <!-- Animated Background -->
+    <div class="animated-background">
+        <div class="gradient-orb gradient-orb-1"></div>
+        <div class="gradient-orb gradient-orb-2"></div>
+        <div class="gradient-orb gradient-orb-3"></div>
+        <div class="gradient-orb gradient-orb-4"></div>
+        <div class="stars-layer"></div>
+    </div>
+    <header class="main-header glass-effect" role="banner">
+        <div class="header-container">
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle navigation menu"
+                aria-expanded="false" aria-controls="mobileNav">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+
+            <!-- Brand Logo -->
+            <div class="brand-logo">
+                <a href="{{ url_for('index') }}" class="brand-link">
+                    <i class="fas fa-images logo-icon"></i>
+                    <span class="brand-text">Image-API<span class="brand-domain"></span></span>
+                </a>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <nav class="desktop-nav" role="navigation" aria-label="Main navigation">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="{{ url_for('index') }}"
+                            class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">
+                            <i class="fas fa-home nav-icon"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a href="{{ url_for('dashboard') }}"
+                            class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                            <i class="fas fa-chart-line nav-icon"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('folders') }}"
+                            class="nav-link {% if request.endpoint == 'folders' %}active{% endif %}">
+                            <i class="fas fa-folder nav-icon"></i>
+                            <span>Folders</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('settings') }}"
+                            class="nav-link {% if request.endpoint == 'settings' %}active{% endif %}">
+                            <i class="fas fa-cog nav-icon"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a href="{{ url_for('login') }}"
+                            class="nav-link {% if request.endpoint == 'login' %}active{% endif %}">
+                            <i class="fas fa-sign-in-alt nav-icon"></i>
+                            <span>Login</span>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    <li class="nav-item">
+                        <a href="{{ url_for('docs') }}"
+                            class="nav-link {% if request.endpoint == 'docs' %}active{% endif %}">
+                            <i class="fas fa-book nav-icon"></i>
+                            <span>API Docs</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- User Profile Dropdown -->
+                {% if current_user.is_authenticated %}
+                <div class="user-profile-dropdown">
+                    <button class="profile-trigger" aria-haspopup="true" aria-expanded="false" id="profileDropdownBtn">
+                        <div class="profile-avatar">
+                            {{ current_user.username[0].upper() }}
+                        </div>
+                        <span class="profile-username">{{ current_user.username }}</span>
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
+                    </button>
+                    <div class="profile-dropdown-menu glass-effect" id="profileDropdownMenu" role="menu">
+                        <div class="dropdown-header">
+                            <p class="dropdown-user-email">{{ current_user.email }}</p>
+                        </div>
+                        <hr class="dropdown-divider">
+                        <a href="{{ url_for('settings') }}" class="dropdown-item" role="menuitem">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                        <a href="{{ url_for('logout') }}" class="dropdown-item" role="menuitem">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+                {% else %}
+                <a href="{{ url_for('register') }}" class="btn btn-primary btn-glow">
+                    <span>Get Started</span>
+                    <i class="fas fa-arrow-right btn-icon"></i>
+                </a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+    <!-- Mobile Navigation Sidebar -->
+    <aside class="mobile-sidebar glass-effect" id="mobileNav" role="navigation" aria-label="Mobile navigation"
+        aria-hidden="true">
+        <div class="mobile-sidebar-header">
+            <div class="brand-logo-mobile">
+                <i class="fas fa-images logo-icon" style="font-size: 1.5rem; color: #3b82f6;"></i>
+                <span class="brand-text-mobile">Image API</span>
+            </div>
+            <button class="mobile-sidebar-close" id="mobileSidebarClose" aria-label="Close navigation menu">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        {% if current_user.is_authenticated %}
+        <div class="mobile-user-info glass-card">
+            <div class="mobile-avatar">{{ current_user.username[0].upper() }}</div>
+            <div class="mobile-user-details">
+                <p class="mobile-username">{{ current_user.username }}</p>
+                <p class="mobile-email">{{ current_user.email }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <nav class="mobile-nav-list">
+            <a href="{{ url_for('index') }}"
+                class="mobile-nav-item {% if request.endpoint == 'index' %}active{% endif %}">
+                <i class="fas fa-home mobile-nav-icon"></i>
+                <span>Home</span>
+            </a>
+
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('dashboard') }}"
+                class="mobile-nav-item {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                <i class="fas fa-chart-line mobile-nav-icon"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{{ url_for('folders') }}"
+                class="mobile-nav-item {% if request.endpoint == 'folders' %}active{% endif %}">
+                <i class="fas fa-folder mobile-nav-icon"></i>
+                <span>Folders</span>
+            </a>
+            <a href="{{ url_for('settings') }}"
+                class="mobile-nav-item {% if request.endpoint == 'settings' %}active{% endif %}">
+                <i class="fas fa-cog mobile-nav-icon"></i>
+                <span>Settings</span>
+            </a>
+            {% else %}
+            <a href="{{ url_for('login') }}"
+                class="mobile-nav-item {% if request.endpoint == 'login' %}active{% endif %}">
+                <i class="fas fa-sign-in-alt mobile-nav-icon"></i>
+                <span>Login</span>
+            </a>
+            <a href="{{ url_for('register') }}"
+                class="mobile-nav-item {% if request.endpoint == 'register' %}active{% endif %}">
+                <i class="fas fa-user-plus mobile-nav-icon"></i>
+                <span>Sign Up</span>
+            </a>
+            {% endif %}
+
+            <a href="{{ url_for('docs') }}"
+                class="mobile-nav-item {% if request.endpoint == 'docs' %}active{% endif %}">
+                <i class="fas fa-book mobile-nav-icon"></i>
+                <span>API Documentation</span>
+            </a>
+
+            {% if current_user.is_authenticated %}
+            <hr class="mobile-nav-divider">
+            <a href="{{ url_for('logout') }}" class="mobile-nav-item logout-item">
+                <i class="fas fa-sign-out-alt mobile-nav-icon"></i>
+                <span>Logout</span>
+            </a>
+            {% endif %}
+        </nav>
+
+        <div class="mobile-sidebar-footer">
+            <p class="mobile-footer-text">Made by Prajwal A B</p>
+            <p class="mobile-footer-version">v1.0.0</p>
+        </div>
+    </aside>
+    <div class="mobile-sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="main-content" role="main">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-messages-container" id="flashMessages">
+            {% for category, message in messages %}
+            <div class="flash-message flash-{{ category }} glass-effect" role="alert">
+                <div class="flash-icon">
+                    {% if category == 'success' %}
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M16.6667 5L7.50004 14.1667L3.33337 10" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    {% elif category == 'error' %}
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        ircle cx="10" cy="10" r="7"7" stroke="currentColor" stroke-width="2"/>
+                        <path d="M10 6V10" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        ircle cx="10" cy="13" r="0.5" fill="currentntColor"/>
+                    </svg>
+                    {% else %}
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        ircle cx="10" cy="10"0" r="7" stroke="currentColor" stroke-width="2"/>
+                        <path d="M10 13V10" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                    {% endif %}
+                </div>
+                <p class="flash-text">{{ message }}</p>
+                <button class="flash-close" onclick="this.parentElement.remove()" aria-label="Close message">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="1.5"
+                            stroke-linecap="round" />
+                    </svg>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- Page Content -->
+        <div class="content-wrapper">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer glass-effect" role="contentinfo">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <!-- About Section -->
+                <div class="footer-section">
+                    <h3 class="footer-heading">About Image API</h3>
+                    <p class="footer-description">
+                        Professional image and PDF storage service with powerful RESTful API.
+                        Securely store, organize, and retrieve your files with folder management
+                        and comprehensive API endpoints.
+                    </p>
+
+                </div>
+
+                <!-- Quick Links -->
+                <div class="footer-section">
+                    <h3 class="footer-heading">Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('index') }}" class="footer-link">Home</a></li>
+                        <li><a href="{{ url_for('docs') }}" class="footer-link">API Documentation</a></li>
+                        {% if current_user.is_authenticated %}
+                        <li><a href="{{ url_for('dashboard') }}" class="footer-link">Dashboard</a></li>
+                        <li><a href="{{ url_for('folders') }}" class="footer-link">My Folders</a></li>
+                        <li><a href="{{ url_for('settings') }}" class="footer-link">Settings</a></li>
+                        {% else %}
+                        <li><a href="{{ url_for('register') }}" class="footer-link">Sign Up</a></li>
+                        <li><a href="{{ url_for('login') }}" class="footer-link">Login</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <!-- Resources -->
+                <div class="footer-section">
+                    <h3 class="footer-heading">Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('docs') }}#getting-started" class="footer-link">Getting Started</a></li>
+                        <li><a href="{{ url_for('docs') }}#api-reference" class="footer-link">API Reference</a></li>
+                        <li><a href="{{ url_for('docs') }}#examples" class="footer-link">Code Examples</a></li>
+                        <li><a href="{{ url_for('docs') }}#rate-limits" class="footer-link">Rate Limits</a></li>
+                        <li><a href="{{ url_for('docs') }}#authentication" class="footer-link">Authentication</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact & Legal -->
+                <div class="footer-section">
+                    <h3 class="footer-heading">Information</h3>
+                    <ul class="footer-links">
+                        <li class="footer-info-item">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path
+                                    d="M8 14C11.3137 14 14 11.3137 14 8C14 4.68629 11.3137 2 8 2C4.68629 2 2 4.68629 2 8C2 11.3137 4.68629 14 8 14Z"
+                                    stroke="currentColor" stroke-width="1.2" />
+                                <path d="M8 4V8L10.5 9.5" stroke="currentColor" stroke-width="1.2"
+                                    stroke-linecap="round" />
+                            </svg>
+                            <span>Hosted 24/7 on PythonAnywhere</span>
+                        </li>
+                        <li class="footer-info-item">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path
+                                    d="M14 6C14 10 8 14 8 14C8 14 2 10 2 6C2 3.79086 3.79086 2 6 2C6.88366 2 7.68879 2.30866 8.31813 2.82873C8.94747 2.30866 9.75634 2 10.6437 2C12.2091 2 14 3.79086 14 6Z"
+                                    stroke="currentColor" stroke-width="1.2" />
+                            </svg>
+                            <span>imageapi.pythonanywhere.com</span>
+                        </li>
+                        <li class="footer-info-item">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <rect x="2" y="4" width="12" height="10" rx="1" stroke="currentColor"
+                                    stroke-width="1.2" />
+                                <path d="M2 7L8 10L14 7" stroke="currentColor" stroke-width="1.2" />
+                            </svg>
+                            <span>RESTful JSON API</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <div class="footer-bottom-content">
+                    <p class="footer-copyright">
+                        &copy; 2025 Image API. Made with
+                        <svg class="heart-icon" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path
+                                d="M12 4.66667C12 8.33333 7 11.6667 7 11.6667C7 11.6667 2 8.33333 2 4.66667C2 2.82572 3.32572 1.5 4.83333 1.5C5.52304 1.5 6.1548 1.74757 6.65757 2.15757C7.16034 1.74757 7.79221 1.5 8.48192 1.5C9.98428 1.5 12 2.82572 12 4.66667Z"
+                                fill="#ef4444" />
+                        </svg>
+                        by <strong>Prajwal A B</strong>
+                    </p>
+                    <div class="footer-badges">
+                        <span class="footer-badge">
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                ircle cx="6" cy="6"6" r="4" fill="#10b981"/>
+                            </svg>
+                            Online
+                        </span>
+                        <span class="footer-badge">Flask API</span>
+                        <span class="footer-badge">v1.0.0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-to-top glass-effect" id="scrollToTop" aria-label="Scroll to top">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M10 15V5M10 5L5 10M10 5L15 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
+        </svg>
+    </button>
+
+    <!-- Loading Indicator -->
+    <div class="loading-indicator" id="loadingIndicator">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Core JavaScript -->
+    <script>
+        // Mobile Sidebar Toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mobileSidebar = document.getElementById('mobileNav');
+        const mobileSidebarClose = document.getElementById('mobileSidebarClose');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        function openMobileSidebar() {
+            mobileSidebar.classList.add('active');
+            sidebarOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            mobileSidebar.setAttribute('aria-hidden', 'false');
+            mobileMenuToggle.setAttribute('aria-expanded', 'true');
+
+            // Focus trap
+            const firstFocusable = mobileSidebar.querySelector('a, button');
+            if (firstFocusable) firstFocusable.focus();
+        }
+
+        function closeMobileSidebar() {
+            mobileSidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+            mobileSidebar.setAttribute('aria-hidden', 'true');
+            mobileMenuToggle.setAttribute('aria-expanded', 'false');
+            mobileMenuToggle.focus();
+        }
+
+        mobileMenuToggle.addEventListener('click', openMobileSidebar);
+        mobileSidebarClose.addEventListener('click', closeMobileSidebar);
+        sidebarOverlay.addEventListener('click', closeMobileSidebar);
+
+        // Close sidebar on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && mobileSidebar.classList.contains('active')) {
+                closeMobileSidebar();
+            }
+        });
+
+        // Profile Dropdown
+        const profileDropdownBtn = document.getElementById('profileDropdownBtn');
+        const profileDropdownMenu = document.getElementById('profileDropdownMenu');
+
+        if (profileDropdownBtn && profileDropdownMenu) {
+            profileDropdownBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isExpanded = profileDropdownBtn.getAttribute('aria-expanded') === 'true';
+                profileDropdownBtn.setAttribute('aria-expanded', !isExpanded);
+                profileDropdownMenu.classList.toggle('active');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.user-profile-dropdown')) {
+                    profileDropdownBtn.setAttribute('aria-expanded', 'false');
+                    profileDropdownMenu.classList.remove('active');
+                }
+            });
+        }
+
+        // Scroll to Top
+        const scrollToTopBtn = document.getElementById('scrollToTop');
+
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollToTopBtn.classList.add('visible');
+            } else {
+                scrollToTopBtn.classList.remove('visible');
+            }
+        });
+
+        scrollToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Auto-dismiss flash messages
+        setTimeout(() => {
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(msg => {
+                msg.style.animation = 'slideOutRight 0.3s ease-out forwards';
+                setTimeout(() => msg.remove(), 300);
+            });
+        }, 5000);
+
+        // Loading indicator utility
+        window.showLoading = function () {
+            document.getElementById('loadingIndicator').classList.add('active');
+        };
+
+        window.hideLoading = function () {
+            document.getElementById('loadingIndicator').classList.remove('active');
+        };
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#' && href !== '') {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            });
+        });
+
+        // Preload animations for better performance
+        document.fonts.ready.then(() => {
+            document.body.classList.add('fonts-loaded');
+        });
+
+        // Service Worker Registration for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .catch(() => console.log('Service Worker registration skipped'));
+            });
+        }
+
+        // Add active class to current nav item
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.nav-link, .mobile-nav-item').forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.add('active');
+            }
+        });
+    </script>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+
+</html>

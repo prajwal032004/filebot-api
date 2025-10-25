@@ -1,0 +1,632 @@
+{% extends "base.html" %}
+
+{% block title %}Privacy Policy - Image API{% endblock %}
+
+{% block description %}Privacy Policy for Image API - Learn how we collect, use, and protect your personal data in compliance with GDPR.{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Reuse same styles from terms.html */
+    .legal-page {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 3rem 2rem;
+    }
+    
+    .legal-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding: 3rem 2rem;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1));
+        border-radius: var(--radius-xl);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .legal-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #10b981, #3b82f6);
+        border-radius: 50%;
+        font-size: 2.5rem;
+        color: white;
+    }
+    
+    .legal-title {
+        font-size: 2.5rem;
+        margin-bottom: 0.75rem;
+        font-weight: 800;
+    }
+    
+    .legal-updated {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+    }
+    
+    .legal-content {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-xl);
+        padding: 3rem;
+        backdrop-filter: blur(20px);
+        line-height: 1.8;
+    }
+    
+    .legal-section {
+        margin-bottom: 3rem;
+    }
+    
+    .legal-section:last-child {
+        margin-bottom: 0;
+    }
+    
+    .section-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 35px;
+        height: 35px;
+        background: linear-gradient(135deg, #10b981, #3b82f6);
+        border-radius: 50%;
+        color: white;
+        font-weight: 700;
+        margin-right: 1rem;
+        font-size: 1.1rem;
+    }
+    
+    .legal-section h2 {
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        color: var(--text-primary);
+    }
+    
+    .legal-section h3 {
+        font-size: 1.3rem;
+        margin: 2rem 0 1rem;
+        color: #10b981;
+    }
+    
+    .legal-section p {
+        margin-bottom: 1.25rem;
+        color: var(--text-secondary);
+    }
+    
+    .legal-section ul,
+    .legal-section ol {
+        margin: 1.5rem 0;
+        padding-left: 2rem;
+    }
+    
+    .legal-section li {
+        margin-bottom: 1rem;
+        color: var(--text-secondary);
+    }
+    
+    .legal-section li strong {
+        color: var(--text-primary);
+    }
+    
+    .highlight-box {
+        background: rgba(16, 185, 129, 0.1);
+        border-left: 4px solid #10b981;
+        padding: 1.5rem;
+        border-radius: var(--radius-md);
+        margin: 2rem 0;
+    }
+    
+    .highlight-box strong {
+        color: #10b981;
+    }
+    
+    .info-box {
+        background: rgba(59, 130, 246, 0.1);
+        border-left: 4px solid #3b82f6;
+        padding: 1.5rem;
+        border-radius: var(--radius-md);
+        margin: 2rem 0;
+    }
+    
+    .info-box strong {
+        color: #3b82f6;
+    }
+    
+    code {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        color: #10b981;
+        font-size: 0.9em;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+    }
+    
+    th, td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--glass-border);
+    }
+    
+    th {
+        background: rgba(16, 185, 129, 0.15);
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+    
+    tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .contact-section {
+        text-align: center;
+        margin-top: 3rem;
+        padding: 2rem;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1));
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    
+    .contact-section h3 {
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+    }
+    
+    .contact-section a {
+        color: #10b981;
+        text-decoration: none;
+        font-weight: 600;
+    }
+    
+    .contact-section a:hover {
+        text-decoration: underline;
+    }
+    
+    .gdpr-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: rgba(16, 185, 129, 0.15);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        border-radius: var(--radius-full);
+        color: #10b981;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-top: 1rem;
+    }
+    
+    /* Mobile */
+    @media (max-width: 767px) {
+        .legal-page {
+            padding: 2rem 1rem;
+        }
+        
+        .legal-header {
+            padding: 2rem 1rem;
+        }
+        
+        .legal-icon {
+            width: 60px;
+            height: 60px;
+            font-size: 2rem;
+        }
+        
+        .legal-title {
+            font-size: 1.75rem;
+        }
+        
+        .legal-content {
+            padding: 1.5rem;
+        }
+        
+        .legal-section h2 {
+            font-size: 1.4rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+        
+        .section-number {
+            width: 30px;
+            height: 30px;
+            font-size: 0.95rem;
+            margin-right: 0;
+        }
+        
+        .legal-section h3 {
+            font-size: 1.15rem;
+        }
+        
+        table {
+            font-size: 0.85rem;
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        th, td {
+            padding: 0.75rem 0.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="legal-page">
+    <div class="legal-header">
+        <div class="legal-icon">
+            <i class="fas fa-shield-alt"></i>
+        </div>
+        <h1 class="legal-title">Privacy Policy</h1>
+        <p class="legal-updated"><strong>Last Updated:</strong> October 24, 2025</p>
+        <p class="legal-updated"><strong>Effective Date:</strong> October 24, 2025</p>
+        <div class="gdpr-badge">
+            <i class="fas fa-check-circle"></i>
+            <span>GDPR Compliant</span>
+        </div>
+    </div>
+
+    <div class="legal-content">
+        <!-- Introduction -->
+        <div class="legal-section">
+            <h2><span class="section-number">1</span> Introduction</h2>
+            <p>
+                <strong>Image API</strong> ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your personal information when you use our Service available at <code>imageapi.pythonanywhere.com</code>.
+            </p>
+            <p>
+                This Privacy Policy complies with the <strong>EU General Data Protection Regulation (GDPR)</strong>, <strong>California Consumer Privacy Act (CCPA)</strong>, and other applicable data protection laws.
+            </p>
+            <div class="highlight-box">
+                <p><strong><i class="fas fa-shield-alt"></i> Your Privacy Matters:</strong> We take your privacy seriously and implement industry-standard security measures to protect your data. You have full control over your personal information.</p>
+            </div>
+        </div>
+
+        <!-- Data Controller -->
+        <div class="legal-section">
+            <h2><span class="section-number">2</span> Data Controller Information</h2>
+            <p>
+                The data controller responsible for your personal information is:
+            </p>
+            <ul>
+                <li><strong>Company Name:</strong> Image API</li>
+                <li><strong>Website:</strong> imageapi.pythonanywhere.com</li>
+                <li><strong>Email:</strong> support@imageapi.com</li>
+                <li><strong>Address:</strong> [Your Business Address]</li>
+            </ul>
+        </div>
+
+        <!-- Information We Collect -->
+        <div class="legal-section">
+            <h2><span class="section-number">3</span> Information We Collect</h2>
+            
+            <h3>3.1 Personal Information You Provide</h3>
+            <p>When you register for an account, we collect:</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data Type</th>
+                        <th>Purpose</th>
+                        <th>Legal Basis</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Email Address</strong></td>
+                        <td>Account authentication, communication</td>
+                        <td>Contract performance</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Username</strong></td>
+                        <td>Account identification</td>
+                        <td>Contract performance</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Password (hashed)</strong></td>
+                        <td>Account security</td>
+                        <td>Contract performance</td>
+                    </tr>
+                    <tr>
+                        <td><strong>API Key</strong></td>
+                        <td>API authentication</td>
+                        <td>Contract performance</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>3.2 Content You Upload</h3>
+            <p>We collect and store:</p>
+            <ul>
+                <li><strong>Images:</strong> PNG, JPG, JPEG, GIF, WebP files</li>
+                <li><strong>PDFs:</strong> PDF documents</li>
+                <li><strong>Metadata:</strong> File names, descriptions, upload dates, file sizes, image dimensions</li>
+                <li><strong>Folder Information:</strong> Folder names, visibility settings</li>
+            </ul>
+            
+            <h3>3.3 Automatically Collected Information</h3>
+            <p>When you use our Service, we automatically collect:</p>
+            <ul>
+                <li><strong>IP Address:</strong> For security and fraud prevention</li>
+                <li><strong>Browser Information:</strong> User agent, browser type, device type</li>
+                <li><strong>Usage Data:</strong> API requests, timestamps, features accessed</li>
+                <li><strong>Cookies:</strong> Authentication cookies, session management</li>
+            </ul>
+            
+            <h3>3.4 Information We Do NOT Collect</h3>
+            <div class="info-box">
+                <p><strong><i class="fas fa-check-circle"></i> We Do NOT:</strong></p>
+                <ul>
+                    <li>Sell your personal data to third parties</li>
+                    <li>Track you across other websites</li>
+                    <li>Use your content for training AI models</li>
+                    <li>Share your data with advertisers</li>
+                    <li>Analyze the content of your uploaded files for marketing</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- How We Use Your Information -->
+        <div class="legal-section">
+            <h2><span class="section-number">4</span> How We Use Your Information</h2>
+            
+            <h3>4.1 Service Provision</h3>
+            <ul>
+                <li>Create and manage your account</li>
+                <li>Authenticate API requests</li>
+                <li>Store and deliver your content</li>
+                <li>Process file uploads and metadata extraction</li>
+                <li>Provide search and organization features</li>
+            </ul>
+            
+            <h3>4.2 Communication</h3>
+            <ul>
+                <li>Send service-related notifications</li>
+                <li>Respond to support inquiries</li>
+                <li>Send important updates about the Service</li>
+                <li>Notify you of Terms or Privacy Policy changes</li>
+            </ul>
+            
+            <h3>4.3 Security and Fraud Prevention</h3>
+            <ul>
+                <li>Detect and prevent unauthorized access</li>
+                <li>Monitor for abusive or malicious activity</li>
+                <li>Investigate security incidents</li>
+                <li>Enforce our Terms of Service</li>
+            </ul>
+            
+            <h3>4.4 Service Improvement</h3>
+            <ul>
+                <li>Analyze usage patterns (aggregated and anonymized)</li>
+                <li>Improve performance and reliability</li>
+                <li>Develop new features</li>
+                <li>Fix bugs and technical issues</li>
+            </ul>
+        </div>
+
+        <!-- Data Sharing -->
+        <div class="legal-section">
+            <h2><span class="section-number">5</span> How We Share Your Information</h2>
+            
+            <h3>5.1 Service Providers</h3>
+            <p>We may share data with third-party service providers who assist us in:</p>
+            <ul>
+                <li><strong>Hosting:</strong> PythonAnywhere (server hosting)</li>
+                <li><strong>Email Services:</strong> For transactional emails</li>
+                <li><strong>Analytics:</strong> Aggregated, anonymized usage statistics</li>
+            </ul>
+            <p>All service providers are contractually obligated to protect your data and use it only for specified purposes.</p>
+            
+            <h3>5.2 Legal Requirements</h3>
+            <p>We may disclose your information if required by law or in response to:</p>
+            <ul>
+                <li>Valid legal process (subpoena, court order)</li>
+                <li>Government requests</li>
+                <li>Protection of our rights or safety</li>
+                <li>Enforcement of our Terms of Service</li>
+            </ul>
+            
+            <h3>5.3 Business Transfers</h3>
+            <p>
+                In the event of a merger, acquisition, or sale of assets, your information may be transferred. We will notify you before your information is transferred and becomes subject to a different privacy policy.
+            </p>
+            
+            <h3>5.4 Public Content</h3>
+            <p>
+                If you set folders to "public," the files within those folders may be accessible to anyone with the URL. Ensure you only make content public that you want to share openly.
+            </p>
+        </div>
+
+        <!-- Data Security -->
+        <div class="legal-section">
+            <h2><span class="section-number">6</span> Data Security</h2>
+            
+            <h3>6.1 Security Measures</h3>
+            <p>We implement industry-standard security measures to protect your data:</p>
+            <ul>
+                <li><strong>Encryption:</strong> HTTPS/TLS encryption for data in transit</li>
+                <li><strong>Password Hashing:</strong> Passwords are hashed using PBKDF2-SHA256</li>
+                <li><strong>API Key Security:</strong> Unique, securely generated API keys</li>
+                <li><strong>Access Controls:</strong> Strict access permissions to user data</li>
+                <li><strong>Regular Backups:</strong> Automated database backups</li>
+                <li><strong>Security Monitoring:</strong> Logging and monitoring for suspicious activity</li>
+            </ul>
+            
+            <h3>6.2 Data Storage</h3>
+            <p>
+                Your data is stored on secure servers provided by PythonAnywhere. While we implement reasonable security measures, no method of transmission or storage is 100% secure. You acknowledge the inherent risks of internet transmission.
+            </p>
+            
+            <h3>6.3 Breach Notification</h3>
+            <p>
+                In the event of a data breach that affects your personal information, we will notify you within 72 hours in compliance with GDPR requirements.
+            </p>
+        </div>
+
+        <!-- Data Retention -->
+        <div class="legal-section">
+            <h2><span class="section-number">7</span> Data Retention</h2>
+            
+            <h3>7.1 Active Accounts</h3>
+            <p>
+                We retain your personal information and content for as long as your account is active or as needed to provide the Service.
+            </p>
+            
+            <h3>7.2 Account Deletion</h3>
+            <p>
+                When you delete your account, we will:
+            </p>
+            <ul>
+                <li>Delete your personal information within <strong>30 days</strong></li>
+                <li>Permanently delete your uploaded content within <strong>30 days</strong></li>
+                <li>Retain anonymized analytics data (no personal identifiers)</li>
+                <li>Retain limited data if required by law (e.g., financial records)</li>
+            </ul>
+            
+            <h3>7.3 Inactive Accounts</h3>
+            <p>
+                Accounts inactive for <strong>2 years</strong> may be subject to deletion with 30 days' advance notice via email.
+            </p>
+        </div>
+
+        <!-- Your Rights (GDPR) -->
+        <div class="legal-section">
+            <h2><span class="section-number">8</span> Your Privacy Rights (GDPR/CCPA)</h2>
+            
+            <h3>8.1 Right to Access</h3>
+            <p>
+                You have the right to request a copy of all personal data we hold about you. You can export your data from your account dashboard.
+            </p>
+            
+            <h3>8.2 Right to Rectification</h3>
+            <p>
+                You can update your account information at any time through the Settings page.
+            </p>
+            
+            <h3>8.3 Right to Erasure ("Right to be Forgotten")</h3>
+            <p>
+                You can request deletion of your account and all associated data by contacting us or using the account deletion feature.
+            </p>
+            
+            <h3>8.4 Right to Data Portability</h3>
+            <p>
+                You can download your uploaded files and metadata in a machine-readable format at any time.
+            </p>
+            
+            <h3>8.5 Right to Restriction of Processing</h3>
+            <p>
+                You can request that we limit how we use your personal information under certain circumstances.
+            </p>
+            
+            <h3>8.6 Right to Object</h3>
+            <p>
+                You have the right to object to processing of your personal data based on legitimate interests.
+            </p>
+            
+            <h3>8.7 Right to Withdraw Consent</h3>
+            <p>
+                Where we process data based on consent, you can withdraw consent at any time.
+            </p>
+            
+            <h3>8.8 Right to Lodge a Complaint</h3>
+            <p>
+                You have the right to lodge a complaint with your local data protection authority if you believe we have violated your privacy rights.
+            </p>
+            
+            <div class="highlight-box">
+                <p><strong><i class="fas fa-user-shield"></i> Exercise Your Rights:</strong> To exercise any of these rights, please contact us at <a href="mailto:privacy@imageapi.com" style="color: #10b981; text-decoration: underline;">privacy@imageapi.com</a>. We will respond within 30 days.</p>
+            </div>
+        </div>
+
+        <!-- Cookies -->
+        <div class="legal-section">
+            <h2><span class="section-number">9</span> Cookies and Tracking</h2>
+            
+            <h3>9.1 Essential Cookies</h3>
+            <p>We use essential cookies for:</p>
+            <ul>
+                <li><strong>Authentication:</strong> Keeping you logged in</li>
+                <li><strong>Security:</strong> Protecting against CSRF attacks</li>
+                <li><strong>Session Management:</strong> Maintaining your session state</li>
+            </ul>
+            
+            <h3>9.2 No Third-Party Tracking</h3>
+            <p>
+                We do <strong>NOT</strong> use third-party advertising cookies or tracking pixels. We do not track you across other websites.
+            </p>
+            
+            <h3>9.3 Managing Cookies</h3>
+            <p>
+                You can disable cookies in your browser settings, but this may limit functionality of the Service.
+            </p>
+        </div>
+
+        <!-- Third-Party Links -->
+        <div class="legal-section">
+            <h2><span class="section-number">10</span> Third-Party Links</h2>
+            <p>
+                Our Service may contain links to third-party websites. We are not responsible for the privacy practices of these websites. We encourage you to review their privacy policies.
+            </p>
+        </div>
+
+        <!-- Children's Privacy -->
+        <div class="legal-section">
+            <h2><span class="section-number">11</span> Children's Privacy</h2>
+            <p>
+                Our Service is not intended for children under 18 years of age. We do not knowingly collect personal information from children. If you believe we have collected data from a child, please contact us immediately.
+            </p>
+        </div>
+
+        <!-- International Data Transfers -->
+        <div class="legal-section">
+            <h2><span class="section-number">12</span> International Data Transfers</h2>
+            <p>
+                Your information may be transferred to and stored on servers located outside your country of residence. We ensure that appropriate safeguards are in place to protect your data in accordance with this Privacy Policy and applicable laws.
+            </p>
+        </div>
+
+        <!-- Changes to Privacy Policy -->
+        <div class="legal-section">
+            <h2><span class="section-number">13</span> Changes to This Privacy Policy</h2>
+            <p>
+                We may update this Privacy Policy from time to time. We will notify you of material changes by:
+            </p>
+            <ul>
+                <li>Posting the updated policy on this page</li>
+                <li>Updating the "Last Updated" date</li>
+                <li>Sending an email notification for significant changes</li>
+            </ul>
+            <p>
+                Continued use of the Service after changes constitutes acceptance of the updated Privacy Policy.
+            </p>
+        </div>
+
+        <!-- Contact -->
+        <div class="contact-section">
+            <h3><i class="fas fa-envelope"></i> Contact Us About Privacy</h3>
+            <p>
+                If you have questions or concerns about this Privacy Policy or our data practices, please contact us:
+            </p>
+            <p>
+                <strong>Email:</strong> <a href="mailto:privacy@imageapi.com">privacy@imageapi.com</a><br>
+                <strong>Data Protection Officer:</strong> <a href="mailto:dpo@imageapi.com">dpo@imageapi.com</a>
+            </p>
+            <p style="margin-top: 1.5rem;">
+                <a href="{{ url_for('index') }}" class="btn btn-primary" style="background: linear-gradient(135deg, #10b981, #3b82f6);">
+                    <i class="fas fa-home"></i> Back to Homepage
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

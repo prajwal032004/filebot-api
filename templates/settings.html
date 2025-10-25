@@ -1,0 +1,569 @@
+{% extends "base.html" %}
+
+{% block title %}Settings - Account & API{% endblock %}
+
+{% block extra_head %}
+<style>
+    .settings-page {
+        padding: 2rem 1rem;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    
+    .page-header {
+        margin-bottom: 2rem;
+    }
+    
+    .header-title {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .header-title h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
+    }
+    
+    .header-title i {
+        font-size: 2.5rem;
+        color: #3b82f6;
+    }
+    
+    .header-description {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1.1rem;
+    }
+    
+    .settings-sections {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .settings-card {
+        padding: 2rem;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+    }
+    
+    .card-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .card-icon {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        font-size: 1.5rem;
+    }
+    
+    .card-icon.api {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+    }
+    
+    .card-icon.profile {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+    
+    .card-icon.security {
+        background: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+    }
+    
+    .card-title-section h2 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin: 0 0 0.25rem 0;
+    }
+    
+    .card-subtitle {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .api-key-section {
+        margin-bottom: 1.5rem;
+    }
+    
+    .api-key-label {
+        display: block;
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.9);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .api-key-wrapper {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+    
+    .api-key-input {
+        flex: 1;
+        min-width: 250px;
+        padding: 0.9rem 1rem;
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        color: #3b82f6;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+    
+    .copy-btn {
+        padding: 0.9rem 1.5rem;
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .copy-btn:hover {
+        background: rgba(59, 130, 246, 0.2);
+        transform: translateY(-2px);
+    }
+    
+    .copy-btn.copied {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+        border-color: rgba(16, 185, 129, 0.2);
+    }
+    
+    .info-box {
+        padding: 1.25rem;
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .info-box-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+        color: #3b82f6;
+    }
+    
+    .info-box-header i {
+        font-size: 1.25rem;
+    }
+    
+    .info-box-content {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+    
+    .info-box-content ul {
+        margin: 0.5rem 0 0 1.5rem;
+        padding: 0;
+    }
+    
+    .info-box-content li {
+        margin-bottom: 0.5rem;
+    }
+    
+    .warning-box {
+        padding: 1.25rem;
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .warning-box-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+        color: #ef4444;
+    }
+    
+    .warning-box-header i {
+        font-size: 1.25rem;
+    }
+    
+    .warning-box-content {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+    
+    .regenerate-btn {
+        width: 100%;
+        padding: 1rem;
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    .regenerate-btn:hover {
+        background: rgba(239, 68, 68, 0.15);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(239, 68, 68, 0.2);
+    }
+    
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        margin-bottom: 0.75rem;
+    }
+    
+    .info-label {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.6);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .info-value {
+        font-weight: 600;
+        color: white;
+    }
+    
+    .code-example {
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+    }
+    
+    .code-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .code-title {
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.9);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .code-copy {
+        padding: 0.4rem 0.8rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .code-copy:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .code-block {
+        font-family: 'Courier New', monospace;
+        font-size: 0.85rem;
+        color: #e0e0e0;
+        line-height: 1.6;
+        overflow-x: auto;
+    }
+    
+    .code-comment {
+        color: #6b7280;
+    }
+    
+    .code-string {
+        color: #10b981;
+    }
+    
+    .code-keyword {
+        color: #8b5cf6;
+    }
+    
+    .code-variable {
+        color: #3b82f6;
+    }
+    
+    @media (max-width: 640px) {
+        .api-key-wrapper {
+            flex-direction: column;
+        }
+        
+        .api-key-input {
+            min-width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="settings-page">
+    <div class="page-header">
+        <div class="header-title">
+            <i class="fas fa-cog"></i>
+            <h1>Settings</h1>
+        </div>
+        <p class="header-description">
+            Manage your API key, view account details, and configure your preferences
+        </p>
+    </div>
+
+    <div class="settings-sections">
+        <!-- API Key Section -->
+        <div class="settings-card glass-effect">
+            <div class="card-header">
+                <div class="card-icon api">
+                    <i class="fas fa-key"></i>
+                </div>
+                <div class="card-title-section">
+                    <h2>API Key</h2>
+                    <p class="card-subtitle">Use this key to authenticate API requests</p>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <div class="info-box-header">
+                    <i class="fas fa-info-circle"></i>
+                    <span>How to use your API key</span>
+                </div>
+                <div class="info-box-content">
+                    Include your API key in the request header:
+                    <ul>
+                        <li><strong>Header name:</strong> X-API-Key</li>
+                        <li><strong>Header value:</strong> Your API key below</li>
+                        <li><strong>Example:</strong> ode style="color: #3b82f2f6;">X-API-Key: your_api_key_here</code></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="api-key-section">
+                <label class="api-key-label">
+                    <i class="fas fa-fingerprint"></i>
+                    Your API Key
+                </label>
+                <div class="api-key-wrapper">
+                    <input 
+                        type="text" 
+                        id="apiKeyInput" 
+                        class="api-key-input" 
+                        value="{{ current_user.api_key }}" 
+                        readonly
+                    >
+                    <button class="copy-btn" id="copyBtn">
+                        <i class="fas fa-copy"></i>
+                        <span id="copyText">Copy</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-title">
+                        <i class="fas fa-code"></i>
+                        Python Example
+                    </span>
+                    <button class="code-copy" onclick="copyCodeExample()">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+                <pre class="code-block" id="codeExample"><span class="code-keyword">import</span> requests
+
+<span class="code-variable">API_KEY</span> = <span class="code-string">"{{ current_user.api_key }}"</span>
+<span class="code-variable">BASE_URL</span> = <span class="code-string">"https://imageapi.pythonanywhere.com"</span>
+
+<span class="code-comment"># Get all folders</span>
+<span class="code-variable">response</span> = requests.get(
+    <span class="code-string">f"<span class="code-variable">{BASE_URL}</span>/api/folders"</span>,
+    headers={<span class="code-string">"X-API-Key"</span>: <span class="code-variable">API_KEY</span>}
+)
+
+<span class="code-keyword">print</span>(response.json())</pre>
+            </div>
+
+            <div class="warning-box">
+                <div class="warning-box-header">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Danger Zone</span>
+                </div>
+                <div class="warning-box-content">
+                    Regenerating your API key will invalidate the current key. All applications using the old key will stop working immediately. This action cannot be undone.
+                </div>
+            </div>
+
+            <form action="{{ url_for('regenerate_key') }}" method="POST" onsubmit="return confirm('Are you sure you want to regenerate your API key? Your old key will stop working immediately.')">
+                <button type="submit" class="regenerate-btn">
+                    <i class="fas fa-sync-alt"></i>
+                    Regenerate API Key
+                </button>
+            </form>
+        </div>
+
+        <!-- Account Information -->
+        <div class="settings-card glass-effect">
+            <div class="card-header">
+                <div class="card-icon profile">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="card-title-section">
+                    <h2>Account Information</h2>
+                    <p class="card-subtitle">Your profile and account details</p>
+                </div>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">
+                    <i class="fas fa-user-circle"></i>
+                    Username
+                </span>
+                <span class="info-value">{{ current_user.username }}</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">
+                    <i class="fas fa-envelope"></i>
+                    Email Address
+                </span>
+                <span class="info-value">{{ current_user.email }}</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">
+                    <i class="fas fa-calendar-plus"></i>
+                    Member Since
+                </span>
+                <span class="info-value">{{ current_user.created_at.strftime('%B %d, %Y') }}</span>
+            </div>
+
+            
+        </div>
+
+        <!-- Security & Documentation -->
+        <div class="settings-card glass-effect">
+            <div class="card-header">
+                <div class="card-icon security">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="card-title-section">
+                    <h2>Security & Resources</h2>
+                    <p class="card-subtitle">Important information about your account</p>
+                </div>
+            </div>
+
+            <div class="info-box" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.2);">
+                <div class="info-box-header" style="color: #10b981;">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Security Features</span>
+                </div>
+                <div class="info-box-content">
+                    <ul>
+                        <li><strong>Password Encryption:</strong> Your password is hashed using industry-standard algorithms</li>
+                        <li><strong>API Rate Limiting:</strong> 200 requests per day, 50 per hour</li>
+                        <li><strong>HTTPS Only:</strong> All API requests must use secure connections</li>
+                        <li><strong>Data Privacy:</strong> Your files are stored securely and never shared</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="info-row" style="cursor: pointer;" onclick="window.location.href='{{ url_for('docs') }}'">
+                <span class="info-label">
+                    <i class="fas fa-book"></i>
+                    API Documentation
+                </span>
+                <span class="info-value" style="color: #3b82f6;">
+                    View Docs <i class="fas fa-arrow-right"></i>
+                </span>
+            </div>
+
+            <div class="info-row" style="cursor: pointer;" onclick="window.location.href='{{ url_for('dashboard') }}'">
+                <span class="info-label">
+                    <i class="fas fa-chart-line"></i>
+                    Dashboard
+                </span>
+                <span class="info-value" style="color: #3b82f6;">
+                    Go to Dashboard <i class="fas fa-arrow-right"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Copy API Key
+    const copyBtn = document.getElementById('copyBtn');
+    const apiKeyInput = document.getElementById('apiKeyInput');
+    const copyText = document.getElementById('copyText');
+
+    copyBtn.addEventListener('click', function() {
+        apiKeyInput.select();
+        document.execCommand('copy');
+        
+        this.classList.add('copied');
+        copyText.textContent = 'Copied!';
+        this.querySelector('i').className = 'fas fa-check';
+        
+        setTimeout(() => {
+            this.classList.remove('copied');
+            copyText.textContent = 'Copy';
+            this.querySelector('i').className = 'fas fa-copy';
+        }, 2000);
+    });
+
+    // Copy code example
+    function copyCodeExample() {
+        const codeBlock = document.getElementById('codeExample');
+        const text = codeBlock.textContent;
+        
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = event.currentTarget;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+            }, 2000);
+        });
+    }
+</script>
+{% endblock %}

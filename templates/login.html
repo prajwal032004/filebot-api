@@ -1,0 +1,569 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Access Your Account{% endblock %}
+
+{% block description %}Login to access your Image API dashboard, manage folders, and retrieve your API key{% endblock %}
+
+{% block extra_head %}
+<style>
+    .login-page {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+    }
+
+    .login-container {
+        width: 100%;
+        max-width: 1200px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        align-items: center;
+    }
+
+    .login-illustration {
+        display: none;
+        padding: 3rem;
+        text-align: center;
+    }
+
+    .login-illustration-content {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .illustration-icon {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 2rem;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: white;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .illustration-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .illustration-description {
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.6;
+    }
+
+    .illustration-features {
+        margin-top: 2rem;
+        text-align: left;
+    }
+
+    .illustration-feature {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .illustration-feature:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateX(5px);
+    }
+
+    .illustration-feature i {
+        font-size: 1.5rem;
+        color: #3b82f6;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(59, 130, 246, 0.1);
+        border-radius: 10px;
+    }
+
+    .login-form-container {
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .login-form {
+        padding: 2.5rem;
+    }
+
+    .form-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .form-icon {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 1rem;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: white;
+    }
+
+    .form-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-subtitle {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.95rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.9rem;
+    }
+
+    .input-wrapper {
+        position: relative;
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 1.1rem;
+        pointer-events: none;
+        transition: all 0.3s ease;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 0.9rem 1rem 0.9rem 3rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        color: white;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.08);
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-input:focus + .input-icon {
+        color: #3b82f6;
+    }
+
+    .form-input::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.4);
+        cursor: pointer;
+        font-size: 1.1rem;
+        padding: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .password-toggle:hover {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .form-options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    .checkbox-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .checkbox-wrapper input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+
+    .forgot-link {
+        color: #3b82f6;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .forgot-link:hover {
+        color: #60a5fa;
+        text-decoration: underline;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+    }
+
+    .submit-btn:active {
+        transform: translateY(0);
+    }
+
+    .form-divider {
+        display: flex;
+        align-items: center;
+        margin: 1.5rem 0;
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 0.9rem;
+    }
+
+    .form-divider::before,
+    .form-divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .form-divider::before {
+        margin-right: 1rem;
+    }
+
+    .form-divider::after {
+        margin-left: 1rem;
+    }
+
+    .signup-prompt {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.95rem;
+    }
+
+    .signup-link {
+        color: #3b82f6;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .signup-link:hover {
+        color: #60a5fa;
+        text-decoration: underline;
+    }
+
+    .security-notice {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        border-radius: 10px;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .security-notice i {
+        color: #10b981;
+        font-size: 1.2rem;
+        margin-top: 0.2rem;
+    }
+
+    .security-notice-text {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.5;
+    }
+
+    @media (min-width: 1024px) {
+        .login-container {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .login-illustration {
+            display: block;
+        }
+
+        .form-header .form-icon {
+            display: none;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .login-form {
+            padding: 2rem 1.5rem;
+        }
+
+        .form-title {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-page">
+    <div class="login-container">
+        <!-- Desktop Illustration -->
+        <div class="login-illustration glass-effect">
+            <div class="login-illustration-content">
+                <div class="illustration-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h2 class="illustration-title">Welcome Back!</h2>
+                <p class="illustration-description">
+                    Access your dashboard to manage folders, upload files, and retrieve
+                    your API key. Your secure storage solution awaits.
+                </p>
+
+                <div class="illustration-features">
+                    <div class="illustration-feature">
+                        <i class="fas fa-folder-open"></i>
+                        <div>
+                            <h4 style="margin: 0 0 0.25rem 0; font-size: 0.95rem;">Manage Folders</h4>
+                            <p style="margin: 0; font-size: 0.85rem; color: rgba(255,255,255,0.5);">
+                                Organize files in unlimited folders
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="illustration-feature">
+                        <i class="fas fa-key"></i>
+                        <div>
+                            <h4 style="margin: 0 0 0.25rem 0; font-size: 0.95rem;">API Access</h4>
+                            <p style="margin: 0; font-size: 0.85rem; color: rgba(255,255,255,0.5);">
+                                Use your personal API key for integration
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="illustration-feature">
+                        <i class="fas fa-shield-alt"></i>
+                        <div>
+                            <h4 style="margin: 0 0 0.25rem 0; font-size: 0.95rem;">Secure Storage</h4>
+                            <p style="margin: 0; font-size: 0.85rem; color: rgba(255,255,255,0.5);">
+                                Your files are encrypted and protected
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="illustration-feature">
+                        <i class="fas fa-chart-line"></i>
+                        <div>
+                            <h4 style="margin: 0 0 0.25rem 0; font-size: 0.95rem;">Analytics</h4>
+                            <p style="margin: 0; font-size: 0.85rem; color: rgba(255,255,255,0.5);">
+                                Track your usage and file statistics
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Form -->
+        <div class="login-form-container">
+            <form class="login-form glass-effect" action="{{ url_for('login') }}" method="POST" novalidate>
+                <div class="form-header">
+                    <div class="form-icon">
+                        <i class="fas fa-user-lock"></i>
+                    </div>
+                    <h1 class="form-title">Login to Your Account</h1>
+                    <p class="form-subtitle">Enter your credentials to access the dashboard</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">
+                        <i class="fas fa-envelope"></i> Email Address
+                    </label>
+                    <div class="input-wrapper">
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="form-input"
+                            placeholder="you@example.com"
+                            required
+                            autocomplete="email"
+                            autofocus
+                        >
+                        <i class="fas fa-at input-icon"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock"></i> Password
+                    </label>
+                    <div class="input-wrapper">
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="form-input"
+                            placeholder="Enter your password"
+                            required
+                            autocomplete="current-password"
+                        >
+                        <i class="fas fa-key input-icon"></i>
+                        <button type="button" class="password-toggle" id="togglePassword" aria-label="Toggle password visibility">
+                            <i class="fas fa-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="remember" name="remember">
+                        <label for="remember" style="cursor: pointer; color: rgba(255,255,255,0.7);">
+                            Remember me
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Login to Dashboard</span>
+                </button>
+
+                <div class="form-divider">or</div>
+
+                <div class="signup-prompt">
+                    Don't have an account?
+                    <a href="{{ url_for('register') }}" class="signup-link">
+                        <i class="fas fa-user-plus"></i> Create one now
+                    </a>
+                </div>
+
+                <div class="security-notice">
+                    <i class="fas fa-shield-alt"></i>
+                    <div class="security-notice-text">
+                        <strong>Secure Login:</strong> Your password is encrypted and never stored in plain text.
+                        We use industry-standard security measures to protect your account.
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Password toggle functionality
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    const toggleIcon = document.getElementById('toggleIcon');
+
+    if (togglePassword) {
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+
+            if (type === 'text') {
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        });
+    }
+
+    // Form validation
+    const loginForm = document.querySelector('.login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) {
+                e.preventDefault();
+                alert('Please fill in all fields');
+                return false;
+            }
+
+            // Basic email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                e.preventDefault();
+                alert('Please enter a valid email address');
+                return false;
+            }
+
+            // Show loading state
+            const submitBtn = loginForm.querySelector('.submit-btn');
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Logging in...</span>';
+            submitBtn.disabled = true;
+        });
+    }
+
+    // Add input animations
+    const inputs = document.querySelectorAll('.form-input');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'translateY(-2px)';
+        });
+
+        input.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'translateY(0)';
+        });
+    });
+</script>
+{% endblock %}

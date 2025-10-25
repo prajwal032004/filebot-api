@@ -1,0 +1,2734 @@
+{% extends "base.html" %}
+
+{% block title %}API Documentation - Complete Guide{% endblock %}
+
+{% block extra_head %}
+<style>
+    .docs-page {
+        padding: 2rem 1rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .docs-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .docs-sidebar {
+        display: none;
+        position: sticky;
+        top: 100px;
+        height: fit-content;
+        max-height: calc(100vh - 120px);
+        overflow-y: auto;
+        padding: 2rem;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+    }
+
+    .sidebar-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #3b82f6;
+    }
+
+    .sidebar-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .sidebar-link {
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .sidebar-link:hover,
+    .sidebar-link.active {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+    }
+
+    .sidebar-link i {
+        font-size: 0.85rem;
+        width: 20px;
+    }
+
+    .docs-content {
+        flex: 1;
+    }
+
+    .docs-header {
+        padding: 3rem 2rem;
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .docs-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        border-radius: 20px;
+        font-size: 2.5rem;
+        color: white;
+    }
+
+    .docs-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .docs-subtitle {
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.7);
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .docs-section {
+        padding: 2rem;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        margin-bottom: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .section-title i {
+        color: #3b82f6;
+    }
+
+    .section-subtitle {
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 1.5rem;
+        font-size: 1.05rem;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .info-card {
+        padding: 1.25rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .info-icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(59, 130, 246, 0.1);
+        border-radius: 10px;
+        color: #3b82f6;
+        flex-shrink: 0;
+    }
+
+    .info-content h3 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin: 0 0 0.5rem 0;
+    }
+
+    .info-content p {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    .code-tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .code-tab {
+        padding: 0.6rem 1.25rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: rgba(255, 255, 255, 0.7);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .code-tab:hover,
+    .code-tab.active {
+        background: rgba(59, 130, 246, 0.1);
+        border-color: #3b82f6;
+        color: #3b82f6;
+    }
+
+    .code-panels {
+        position: relative;
+    }
+
+    .code-panel {
+        display: none;
+    }
+
+    .code-panel.active {
+        display: block;
+    }
+
+    .code-block-wrapper {
+        position: relative;
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .code-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        background: rgba(0, 0, 0, 0.3);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .code-language {
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.9);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .copy-code-btn {
+        padding: 0.5rem 1rem;
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 6px;
+        color: #3b82f6;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .copy-code-btn:hover {
+        background: rgba(59, 130, 246, 0.2);
+    }
+
+    .copy-code-btn.copied {
+        background: rgba(16, 185, 129, 0.1);
+        border-color: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+    }
+
+    .code-block {
+        padding: 1.5rem;
+        overflow-x: auto;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9rem;
+        line-height: 1.8;
+        color: #e0e0e0;
+    }
+
+    .code-comment { color: #6b7280; }
+    .code-string { color: #10b981; }
+    .code-keyword { color: #8b5cf6; }
+    .code-variable { color: #3b82f6; }
+    .code-function { color: #f59e0b; }
+    .code-number { color: #ef4444; }
+
+    .endpoint-card {
+        padding: 1.5rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+    }
+
+    .endpoint-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .method-badge {
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+    }
+
+    .method-badge.get {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .method-badge.post {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .endpoint-path {
+        font-family: 'Courier New', monospace;
+        font-weight: 600;
+        color: #3b82f6;
+        font-size: 1.05rem;
+    }
+
+    .endpoint-description {
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+
+    .params-section {
+        margin-top: 1rem;
+    }
+
+    .params-title {
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .param-item {
+        padding: 0.75rem;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .param-name {
+        font-family: 'Courier New', monospace;
+        font-weight: 600;
+        color: #3b82f6;
+    }
+
+    .param-type {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .param-required {
+        display: inline-block;
+        padding: 0.2rem 0.5rem;
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: 0.5rem;
+    }
+
+    .param-optional {
+        display: inline-block;
+        padding: 0.2rem 0.5rem;
+        background: rgba(107, 114, 128, 0.1);
+        color: #9ca3af;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: 0.5rem;
+    }
+
+    .response-example {
+        margin-top: 1rem;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+        margin: 1.5rem 0;
+    }
+
+    .docs-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .docs-table th {
+        background: rgba(59, 130, 246, 0.1);
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: #3b82f6;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .docs-table td {
+        padding: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .docs-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.3rem 0.6rem;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .status-badge.success {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+
+    .status-badge.error {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+
+    .alert-box {
+        padding: 1.25rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .alert-box.info {
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .alert-box.warning {
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .alert-box.success {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .alert-icon {
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .alert-box.info .alert-icon { color: #3b82f6; }
+    .alert-box.warning .alert-icon { color: #f59e0b; }
+    .alert-box.success .alert-icon { color: #10b981; }
+
+    .alert-content {
+        flex: 1;
+    }
+
+    .alert-title {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .alert-text {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    @media (min-width: 768px) {
+        .info-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .docs-container {
+            grid-template-columns: 280px 1fr;
+        }
+
+        .docs-sidebar {
+            display: block;
+        }
+    }
+    /* ============================================
+   ANDROID & SAMSUNG OPTIMIZED MOBILE CSS
+   ============================================ */
+
+/* Force proper viewport rendering on Android */
+@viewport {
+    width: device-width;
+    zoom: 1.0;
+}
+
+/* Android-specific fixes */
+* {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+input, textarea, button, select, a {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+/* Prevent zoom on input focus (Android) */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+textarea,
+select {
+    font-size: 16px !important;
+}
+
+/* Base Mobile Styles - Samsung A52s (1080x2400, 6.5") & A2 (720x1560, 6.5") */
+@media (max-width: 500px) {
+    /* Reset and Base */
+    html {
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+        overflow-x: hidden;
+        position: relative;
+        width: 100%;
+        min-height: 100vh;
+    }
+
+    /* Container Fixes */
+    .index-page,
+    .docs-page {
+        width: 100%;
+        max-width: 100vw;
+        overflow-x: hidden;
+        padding: 0;
+    }
+
+    /* Hero Section - Optimized for Samsung devices */
+    .hero-section {
+        padding: 1.5rem 1rem;
+        gap: 1.5rem;
+        width: 100%;
+        max-width: 100vw;
+        overflow: hidden;
+    }
+
+    .hero-badge {
+        font-size: 0.7rem;
+        padding: 0.4rem 0.7rem;
+        margin-bottom: 1rem;
+        max-width: 90%;
+    }
+
+    .hero-title {
+        font-size: 1.6rem;
+        line-height: 1.3;
+        margin-bottom: 1rem;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+    }
+
+    .gradient-text {
+        display: block;
+        margin-top: 0.5rem;
+    }
+
+    .hero-description {
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        padding: 0 0.25rem;
+    }
+
+    /* Stats Grid - Stack vertically */
+    .hero-stats {
+        width: 100%;
+        max-width: 100%;
+        flex-direction: column;
+        padding: 1rem;
+        gap: 1rem;
+        margin: 0 0 1.5rem 0;
+    }
+
+    .stat-item {
+        width: 100%;
+        max-width: 100%;
+        padding: 0.5rem;
+        justify-content: flex-start;
+    }
+
+    .stat-divider {
+        display: none;
+    }
+
+    .stat-icon {
+        font-size: 1.5rem;
+        min-width: 45px;
+    }
+
+    .stat-number {
+        font-size: 1.3rem;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+    }
+
+    /* CTA Buttons - Full width */
+    .hero-cta {
+        width: 100%;
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 0;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-cta .btn {
+        width: 100%;
+        max-width: 100%;
+        padding: 0.9rem 1.25rem;
+        font-size: 0.9rem;
+        justify-content: center;
+        white-space: nowrap;
+    }
+
+    .btn-large {
+        min-height: 48px;
+    }
+
+    /* Trust Badges */
+    .hero-trust {
+        width: 100%;
+        text-align: center;
+    }
+
+    .trust-text {
+        font-size: 0.8rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .trust-badges {
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+    }
+
+    .trust-badge {
+        width: 100%;
+        padding: 0.6rem;
+        font-size: 0.75rem;
+        justify-content: center;
+    }
+
+    /* Code Window */
+    .hero-visual {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0 0.5rem;
+    }
+
+    .code-window {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 12px;
+    }
+
+    .code-window-header {
+        padding: 0.6rem 1rem;
+    }
+
+    .window-title {
+        font-size: 0.7rem;
+    }
+
+    .control-dot {
+        width: 8px;
+        height: 8px;
+    }
+
+    .code-window-body {
+        padding: 0.75rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .code-snippet {
+        font-size: 0.65rem;
+        line-height: 1.5;
+        white-space: pre;
+        word-wrap: normal;
+        overflow-wrap: normal;
+    }
+
+    /* Sections */
+    .features-section,
+    .how-it-works-section,
+    .use-cases-section {
+        padding: 2.5rem 1rem;
+        width: 100%;
+        max-width: 100vw;
+        overflow: hidden;
+    }
+
+    .section-header {
+        margin-bottom: 2rem;
+        padding: 0 0.5rem;
+    }
+
+    .section-title {
+        font-size: 1.6rem;
+        margin-bottom: 0.75rem;
+        word-wrap: break-word;
+    }
+
+    .section-subtitle {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    /* Feature Cards */
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .feature-card {
+        padding: 1.5rem 1.25rem;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .feature-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+    }
+
+    .feature-title {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .feature-description {
+        font-size: 0.85rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+    }
+
+    .feature-list li {
+        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .feature-list li i {
+        margin-top: 0.2rem;
+        flex-shrink: 0;
+    }
+
+    /* Steps */
+    .steps-container {
+        gap: 1.5rem;
+    }
+
+    .step-card {
+        padding: 1.5rem 1.25rem;
+        flex-direction: column;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .step-number {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+        margin: 0 auto;
+    }
+
+    .step-content {
+        width: 100%;
+    }
+
+    .step-title {
+        font-size: 1.1rem;
+        margin-bottom: 0.75rem;
+        text-align: center;
+    }
+
+    .step-description {
+        font-size: 0.85rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    .step-code {
+        width: 100%;
+        padding: 0.75rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .step-code code {
+        font-size: 0.7rem;
+        white-space: pre;
+    }
+
+    .step-divider {
+        margin: 0.75rem 0;
+    }
+
+    .step-divider i {
+        font-size: 1.5rem;
+    }
+
+    /* Use Cases */
+    .use-cases-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .use-case-card {
+        padding: 1.5rem 1.25rem;
+        width: 100%;
+    }
+
+    .use-case-icon {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .use-case-title {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .use-case-description {
+        font-size: 0.8rem;
+        line-height: 1.5;
+    }
+
+    /* CTA Section */
+    .cta-section {
+        padding: 2rem 1rem;
+        margin: 2rem 0.5rem 1rem;
+        width: calc(100% - 1rem);
+        max-width: 100%;
+    }
+
+    .cta-content {
+        width: 100%;
+    }
+
+    .cta-title {
+        font-size: 1.6rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .cta-description {
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .cta-buttons {
+        flex-direction: column;
+        gap: 0.75rem;
+        width: 100%;
+    }
+
+    .cta-buttons .btn {
+        width: 100%;
+        padding: 0.9rem 1.25rem;
+        min-height: 48px;
+    }
+}
+
+/* Samsung A2 (720x1560) specific */
+@media (max-width: 360px) {
+    .hero-title {
+        font-size: 1.4rem;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+    }
+
+    .code-snippet {
+        font-size: 0.6rem;
+    }
+
+    .feature-card,
+    .step-card,
+    .use-case-card {
+        padding: 1.25rem 1rem;
+    }
+}
+
+/* Samsung A52s (1080x2400) specific */
+@media (min-width: 361px) and (max-width: 767px) {
+    .hero-title {
+        font-size: 1.75rem;
+    }
+
+    .section-title {
+        font-size: 1.75rem;
+    }
+
+    .code-snippet {
+        font-size: 0.7rem;
+    }
+}
+
+/* Landscape Mode - Samsung devices */
+@media (max-width: 767px) and (orientation: landscape) {
+    .hero-section {
+        padding: 1.5rem 1rem;
+    }
+
+    .hero-title {
+        font-size: 1.4rem;
+    }
+
+    .hero-stats {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .stat-item {
+        width: 48%;
+    }
+
+    .stat-divider {
+        display: none;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+    }
+}
+
+/* Fix for Android Chrome address bar */
+@media (max-width: 767px) {
+    .hero-section {
+        min-height: auto;
+        padding-top: max(1.5rem, env(safe-area-inset-top));
+        padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+    }
+}
+
+/* Samsung Internet Browser specific */
+@supports (-webkit-touch-callout: none) {
+    @media (max-width: 767px) {
+        body {
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .code-window-body,
+        .step-code,
+        .table-wrapper {
+            -webkit-overflow-scrolling: touch;
+        }
+    }
+}
+
+/* Better scrollbar for Samsung devices */
+@media (max-width: 767px) {
+    .code-window-body::-webkit-scrollbar,
+    .step-code::-webkit-scrollbar,
+    .table-wrapper::-webkit-scrollbar {
+        height: 4px;
+        width: 4px;
+    }
+
+    .code-window-body::-webkit-scrollbar-track,
+    .step-code::-webkit-scrollbar-track,
+    .table-wrapper::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+    }
+
+    .code-window-body::-webkit-scrollbar-thumb,
+    .step-code::-webkit-scrollbar-thumb,
+    .table-wrapper::-webkit-scrollbar-thumb {
+        background: rgba(59, 130, 246, 0.5);
+        border-radius: 2px;
+    }
+}
+
+/* Performance optimization for Samsung devices */
+@media (max-width: 767px) {
+    .feature-card,
+    .use-case-card,
+    .step-card {
+        will-change: auto;
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+    }
+
+    .glass-effect {
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+}
+
+/* Fix text overflow on Samsung */
+@media (max-width: 767px) {
+    h1, h2, h3, h4, h5, h6, p, span, div {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+        -webkit-hyphens: auto;
+        -moz-hyphens: auto;
+        -ms-hyphens: auto;
+    }
+
+    code, pre {
+        word-wrap: normal;
+        overflow-wrap: normal;
+        hyphens: none;
+        -webkit-hyphens: none;
+    }
+}
+
+/* Touch feedback for Samsung */
+@media (max-width: 767px) {
+    .btn:active,
+    .trust-badge:active,
+    .feature-card:active,
+    .use-case-card:active {
+        opacity: 0.9;
+        transform: scale(0.98);
+    }
+}
+/* ============================================
+   MOBILE-RESPONSIVE CSS FOR DOCS PAGE
+   ============================================ */
+
+/* Base Mobile Styles (320px - 767px) */
+@media (max-width: 767px) {
+    .docs-page {
+        padding: 1rem 0.5rem;
+    }
+
+    .docs-container {
+        gap: 1.5rem;
+    }
+
+    /* Header Mobile */
+    .docs-header {
+        padding: 2rem 1rem;
+        text-align: center;
+    }
+
+    .docs-icon {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 1rem;
+        font-size: 2rem;
+        border-radius: 15px;
+    }
+
+    .docs-title {
+        font-size: 1.75rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .docs-subtitle {
+        font-size: 0.95rem;
+        padding: 0 0.5rem;
+    }
+
+    /* Sections Mobile */
+    .docs-section {
+        padding: 1.5rem 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .section-title i {
+        font-size: 1.5rem;
+    }
+
+    .section-subtitle {
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    /* Info Grid Mobile */
+    .info-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .info-card {
+        padding: 1rem;
+        flex-direction: row;
+    }
+
+    .info-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 1.1rem;
+    }
+
+    .info-content h3 {
+        font-size: 0.95rem;
+    }
+
+    .info-content p {
+        font-size: 0.85rem;
+    }
+
+    /* Code Tabs Mobile */
+    .code-tabs {
+        gap: 0.4rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .code-tab {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+        white-space: nowrap;
+    }
+
+    .code-tab i {
+        font-size: 0.9rem;
+    }
+
+    /* Code Block Mobile */
+    .code-block-wrapper {
+        margin: 0 -0.5rem;
+    }
+
+    .code-header {
+        padding: 0.75rem 1rem;
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
+
+    .code-language {
+        font-size: 0.8rem;
+    }
+
+    .copy-code-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.75rem;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .code-block {
+        padding: 1rem;
+        font-size: 0.75rem;
+        line-height: 1.6;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Endpoint Cards Mobile */
+    .endpoint-card {
+        padding: 1.25rem 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .endpoint-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .method-badge {
+        padding: 0.35rem 0.7rem;
+        font-size: 0.75rem;
+    }
+
+    .endpoint-path {
+        font-size: 0.85rem;
+        word-break: break-all;
+    }
+
+    .endpoint-description {
+        font-size: 0.85rem;
+    }
+
+    /* Parameters Mobile */
+    .params-section {
+        margin-top: 0.75rem;
+    }
+
+    .params-title {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .param-item {
+        padding: 0.6rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .param-name {
+        font-size: 0.85rem;
+    }
+
+    .param-type {
+        font-size: 0.75rem;
+    }
+
+    .param-required,
+    .param-optional {
+        font-size: 0.7rem;
+        padding: 0.15rem 0.4rem;
+    }
+
+    /* Table Mobile */
+    .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 1rem -1rem;
+        padding: 0 1rem;
+    }
+
+    .docs-table {
+        min-width: 500px;
+        font-size: 0.85rem;
+    }
+
+    .docs-table th,
+    .docs-table td {
+        padding: 0.75rem 0.5rem;
+    }
+
+    .docs-table th {
+        font-size: 0.8rem;
+    }
+
+    /* Status Badge Mobile */
+    .status-badge {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    /* Alert Box Mobile */
+    .alert-box {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .alert-icon {
+        font-size: 1.25rem;
+    }
+
+    .alert-title {
+        font-size: 0.95rem;
+    }
+
+    .alert-text {
+        font-size: 0.85rem;
+    }
+
+    .alert-text ul,
+    .alert-text ol {
+        margin-left: 1rem;
+    }
+
+    .alert-text li {
+        margin-bottom: 0.4rem;
+    }
+
+    .alert-text code {
+        font-size: 0.8rem;
+        padding: 0.2rem 0.4rem;
+        word-break: break-word;
+    }
+
+    /* Response Example Mobile */
+    .response-example {
+        margin-top: 0.75rem;
+    }
+
+    /* Sidebar Hidden on Mobile */
+    .docs-sidebar {
+        display: none;
+    }
+}
+
+/* Small Mobile (320px - 480px) */
+@media (max-width: 480px) {
+    .docs-page {
+        padding: 0.75rem 0.25rem;
+    }
+
+    .docs-header {
+        padding: 1.5rem 0.75rem;
+    }
+
+    .docs-title {
+        font-size: 1.5rem;
+    }
+
+    .docs-subtitle {
+        font-size: 0.85rem;
+    }
+
+    .docs-section {
+        padding: 1.25rem 0.75rem;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+    }
+
+    .code-block {
+        font-size: 0.7rem;
+    }
+
+    .endpoint-card {
+        padding: 1rem 0.75rem;
+    }
+
+    .endpoint-path {
+        font-size: 0.8rem;
+    }
+}
+
+/* Tablet Portrait (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .docs-page {
+        padding: 1.5rem 1rem;
+    }
+
+    .docs-header {
+        padding: 2.5rem 1.5rem;
+    }
+
+    .docs-icon {
+        width: 70px;
+        height: 70px;
+    }
+
+    .docs-title {
+        font-size: 2rem;
+    }
+
+    .docs-subtitle {
+        font-size: 1.05rem;
+    }
+
+    .info-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .code-header {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .copy-code-btn {
+        width: auto;
+    }
+
+    .endpoint-header {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .table-wrapper {
+        margin: 1.5rem 0;
+    }
+}
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+    .docs-container {
+        grid-template-columns: 280px 1fr;
+    }
+
+    .docs-sidebar {
+        display: block;
+    }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .code-tab,
+    .copy-code-btn,
+    .sidebar-link {
+        -webkit-tap-highlight-color: transparent;
+        user-select: none;
+    }
+
+    .code-tab:active {
+        transform: scale(0.98);
+    }
+
+    .copy-code-btn:active {
+        transform: scale(0.97);
+    }
+
+    .endpoint-card {
+        transition: none;
+    }
+}
+
+/* Improve Touch Targets */
+@media (max-width: 767px) {
+    .code-tab,
+    .copy-code-btn,
+    .sidebar-link,
+    a {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+    }
+}
+
+/* Code Block Scrollbar Styling */
+.code-block::-webkit-scrollbar {
+    height: 6px;
+}
+
+.code-block::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+.code-block::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.4);
+    border-radius: 3px;
+}
+
+.code-block::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.6);
+}
+
+/* Table Scrollbar Styling */
+.table-wrapper::-webkit-scrollbar {
+    height: 6px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.4);
+    border-radius: 3px;
+}
+
+/* Safe Area Support for Notched Devices */
+@supports (padding: max(0px)) {
+    @media (max-width: 767px) {
+        .docs-page {
+            padding-left: max(0.5rem, env(safe-area-inset-left));
+            padding-right: max(0.5rem, env(safe-area-inset-right));
+        }
+
+        .docs-section {
+            padding-left: max(1rem, env(safe-area-inset-left));
+            padding-right: max(1rem, env(safe-area-inset-right));
+        }
+    }
+}
+
+/* Landscape Mode Optimization */
+@media (max-width: 767px) and (orientation: landscape) {
+    .docs-header {
+        padding: 1.5rem 1rem;
+    }
+
+    .docs-icon {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 0.75rem;
+    }
+
+    .docs-title {
+        font-size: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+    }
+}
+
+/* Better Text Rendering */
+@media (max-width: 767px) {
+    body {
+        -webkit-text-size-adjust: 100%;
+        -moz-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+    }
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Reduce Motion for Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="docs-page">
+    <div class="docs-container">
+        <!-- Sidebar Navigation -->
+        <aside class="docs-sidebar">
+            <h3 class="sidebar-title">
+                <i class="fas fa-list"></i>
+                Contents
+            </h3>
+            <nav class="sidebar-nav">
+                <a href="#introduction" class="sidebar-link">
+                    <i class="fas fa-info-circle"></i>
+                    Introduction
+                </a>
+                <a href="#getting-started" class="sidebar-link">
+                    <i class="fas fa-rocket"></i>
+                    Getting Started
+                </a>
+                <a href="#authentication" class="sidebar-link">
+                    <i class="fas fa-key"></i>
+                    Authentication
+                </a>
+                <a href="#base-url" class="sidebar-link">
+                    <i class="fas fa-link"></i>
+                    Base URL
+                </a>
+                <a href="#rate-limits" class="sidebar-link">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Rate Limits
+                </a>
+                <a href="#endpoints" class="sidebar-link">
+                    <i class="fas fa-server"></i>
+                    API Endpoints
+                </a>
+                <a href="#examples" class="sidebar-link">
+                    <i class="fas fa-code"></i>
+                    Code Examples
+                </a>
+                <a href="#errors" class="sidebar-link">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Error Handling
+                </a>
+                <a href="#best-practices" class="sidebar-link">
+                    <i class="fas fa-star"></i>
+                    Best Practices
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="docs-content">
+            <!-- Header -->
+            <div class="docs-header glass-effect">
+                <div class="docs-icon">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <h1 class="docs-title">API Documentation</h1>
+                <p class="docs-subtitle">
+                    Complete guide to integrating Image API into your applications.
+                    Store, organize, and retrieve images and PDFs with ease.
+                </p>
+            </div>
+
+            <!-- Introduction -->
+            <section id="introduction" class="docs-section glass-effect">
+                <h2 class="section-title">
+                    <i class="fas fa-info-circle"></i>
+                    Introduction
+                </h2>
+                <p class="section-subtitle">
+                    Welcome to the Image API documentation. This RESTful API allows you to store images and PDFs,
+                    organize them in folders, and retrieve them programmatically from any application.
+                </p>
+
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div class="info-content">
+                            <h3>Fast & Reliable</h3>
+                            <p>Built on Flask with PythonAnywhere hosting for 99.9% uptime and low-latency responses.</p>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="info-content">
+                            <h3>Secure Authentication</h3>
+                            <p>Every request is authenticated with your unique API key using the X-API-Key header.</p>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-file-code"></i>
+                        </div>
+                        <div class="info-content">
+                            <h3>JSON Responses</h3>
+                            <p>All endpoints return clean, structured JSON with proper HTTP status codes.</p>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-infinity"></i>
+                        </div>
+                        <div class="info-content">
+                            <h3>No Limits</h3>
+                            <p>Unlimited folders and files. Each file can be up to 10MB in size.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Getting Started -->
+            <section id="getting-started" class="docs-section glass-effect">
+                <h2 class="section-title">
+                    <i class="fas fa-rocket"></i>
+                    Getting Started
+                </h2>
+                <p class="section-subtitle">
+                    Follow these steps to start using the Image API in your application.
+                </p>
+
+                <div class="alert-box info">
+                    <i class="fas fa-lightbulb alert-icon"></i>
+                    <div class="alert-content">
+                        <div class="alert-title">Quick Start Guide</div>
+                        <div class="alert-text">
+                            <ol style="margin: 0.5rem 0 0 1.5rem; padding: 0;">
+                                <li>Create an account at <strong>imageapi.pythonanywhere.com</strong></li>
+                                <li>Get your API key from the Settings page</li>
+                                <li>Include the key in the <code style="color: #3b82f6;">X-API-Key</code> header</li>
+                                <li>Start making requests to the API endpoints</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Step 1: Create an Account</h3>
+                <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">
+                    Visit the registration page and create your free account. You'll immediately receive a unique API key.
+                </p>
+
+                <div class="code-block-wrapper">
+                    <div class="code-header">
+                        <span class="code-language">
+                            <i class="fas fa-terminal"></i>
+                            Registration Endpoint
+                        </span>
+                        <button class="copy-code-btn" onclick="copyCode(this)">
+                            <i class="fas fa-copy"></i>
+                            Copy
+                        </button>
+                    </div>
+                    <pre class="code-block"><code><span class="code-comment"># POST /api/register</span>
+<span class="code-keyword">curl</span> -X POST https://imageapi.pythonanywhere.com/api/register \
+  -H <span class="code-string">"Content-Type: application/json"</span> \
+  -d <span class="code-string">'{
+    "username": "prajwalab",
+    "email": "prajwal@example.com",
+    "password": "SecurePass123!"
+  }'</span></code></pre>
+                </div>
+
+                <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Step 2: Get Your API Key</h3>
+                <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">
+                    {% if current_user.is_authenticated %}
+                        Your personal API key is ready to use:
+                    {% else %}
+                        After registration, your API key will be displayed. You can also retrieve it anytime from the Settings page.
+                    {% endif %}
+                </p>
+
+                {% if current_user.is_authenticated %}
+                <div class="alert-box success">
+                    <i class="fas fa-key alert-icon"></i>
+                    <div class="alert-content">
+                        <div class="alert-title">Your API Key</div>
+                        <div class="alert-text">
+                            <code style="background: rgba(0,0,0,0.3); padding: 0.5rem 1rem; border-radius: 6px; display: block; margin-top: 0.5rem; color: #3b82f6; font-weight: 600;">{{ current_user.api_key }}</code>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </section>
+
+            <!-- Authentication -->
+            <section id="authentication" class="docs-section glass-effect">
+                <h2 class="section-title">
+                    <i class="fas fa-key"></i>
+                    Authentication
+                </h2>
+                <p class="section-subtitle">
+                    All API requests must include your API key in the request header for authentication.
+                </p>
+
+                <div class="alert-box warning">
+                    <i class="fas fa-exclamation-triangle alert-icon"></i>
+                    <div class="alert-content">
+                        <div class="alert-title">Keep Your API Key Secure</div>
+                        <div class="alert-text">
+                            Never share your API key publicly or commit it to version control.
+                            Use environment variables to store it securely in your applications.
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Header Format</h3>
+                <div class="code-block-wrapper">
+                    <div class="code-header">
+                        <span class="code-language">
+                            <i class="fas fa-code"></i>
+                            Authentication Header
+                        </span>
+                        <button class="copy-code-btn" onclick="copyCode(this)">
+                            <i class="fas fa-copy"></i>
+                            Copy
+                        </button>
+                    </div>
+                    <pre class="code-block"><code><span class="code-variable">X-API-Key</span>: <span class="code-string">{% if current_user.is_authenticated %}{{ current_user.api_key }}{% else %}your_api_key_here{% endif %}</span></code></pre>
+                </div>
+
+                <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Example with Different Languages</h3>
+
+                <div class="code-tabs">
+                    <button class="code-tab active" data-tab="python">
+                        <i class="fab fa-python"></i>
+                        Python
+                    </button>
+                    <button class="code-tab" data-tab="curl">
+                        <i class="fas fa-terminal"></i>
+                        cURL
+                    </button>
+                    <button class="code-tab" data-tab="php">
+                        <i class="fab fa-php"></i>
+                        PHP
+                    </button>
+                </div>
+
+                <div class="code-panels">
+                    <div class="code-panel active" id="python">
+                        <div class="code-block-wrapper">
+                            <div class="code-header">
+                                <span class="code-language">
+                                    <i class="fab fa-python"></i>
+                                    Python (requests)
+                                </span>
+                                <button class="copy-code-btn" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i>
+                                    Copy
+                                </button>
+                            </div>
+                            <pre class="code-block"><code><span class="code-keyword">import</span> requests
+
+<span class="code-variable">API_KEY</span> = <span class="code-string">"{% if current_user.is_authenticated %}{{ current_user.api_key }}{% else %}your_api_key_here{% endif %}"</span>
+<span class="code-variable">BASE_URL</span> = <span class="code-string">"https://imageapi.pythonanywhere.com"</span>
+
+<span class="code-comment"># Make authenticated request</span>
+<span class="code-variable">headers</span> = {<span class="code-string">"X-API-Key"</span>: <span class="code-variable">API_KEY</span>}
+<span class="code-variable">response</span> = requests.<span class="code-function">get</span>(<span class="code-string">f"<span class="code-variable">{BASE_URL}</span>/api/folders"</span>, <span class="code-keyword">headers</span>=<span class="code-variable">headers</span>)
+
+<span class="code-keyword">if</span> response.status_code == <span class="code-number">200</span>:
+    <span class="code-variable">data</span> = response.<span class="code-function">json</span>()
+    <span class="code-keyword">print</span>(<span class="code-string">f"Found <span class="code-variable">{len(data['data'])}</span> folders"</span>)
+<span class="code-keyword">else</span>:
+    <span class="code-keyword">print</span>(<span class="code-string">f"Error: <span class="code-variable">{response.status_code}</span>"</span>)</code></pre>
+                        </div>
+                    </div>
+
+
+
+                    <div class="code-panel" id="curl">
+                        <div class="code-block-wrapper">
+                            <div class="code-header">
+                                <span class="code-language">
+                                    <i class="fas fa-terminal"></i>
+                                    cURL
+                                </span>
+                                <button class="copy-code-btn" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i>
+                                    Copy
+                                </button>
+                            </div>
+                            <pre class="code-block"><code><span class="code-comment"># Set your API key</span>
+<span class="code-variable">API_KEY</span>=<span class="code-string">"{% if current_user.is_authenticated %}{{ current_user.api_key }}{% else %}your_api_key_here{% endif %}"</span>
+
+<span class="code-comment"># Make authenticated request</span>
+<span class="code-keyword">curl</span> -X GET https://imageapi.pythonanywhere.com/api/folders \
+  -H <span class="code-string">"X-API-Key: <span class="code-variable">$API_KEY</span>"</span> \
+  | jq <span class="code-string">'.'</span></code></pre>
+                        </div>
+                    </div>
+
+                    <div class="code-panel" id="php">
+                        <div class="code-block-wrapper">
+                            <div class="code-header">
+                                <span class="code-language">
+                                    <i class="fab fa-php"></i>
+                                    PHP
+                                </span>
+                                <button class="copy-code-btn" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i>
+                                    Copy
+                                </button>
+                            </div>
+                            <pre class="code-block"><code><span class="code-keyword"><?php</span>
+
+<span class="code-variable">$apiKey</span> = <span class="code-string">"{% if current_user.is_authenticated %}{{ current_user.api_key }}{% else %}your_api_key_here{% endif %}"</span>;
+<span class="code-variable">$baseUrl</span> = <span class="code-string">"https://imageapi.pythonanywhere.com"</span>;
+
+<span class="code-comment">// Initialize cURL</span>
+<span class="code-variable">$ch</span> = <span class="code-function">curl_init</span>(<span class="code-string">"<span class="code-variable">$baseUrl</span>/api/folders"</span>);
+
+<span class="code-comment">// Set headers</span>
+<span class="code-function">curl_setopt</span>(<span class="code-variable">$ch</span>, CURLOPT_HTTPHEADER, [
+    <span class="code-string">"X-API-Key: <span class="code-variable">$apiKey</span>"</span>
+]);
+<span class="code-function">curl_setopt</span>(<span class="code-variable">$ch</span>, CURLOPT_RETURNTRANSFER, <span class="code-keyword">true</span>);
+
+<span class="code-comment">// Execute request</span>
+<span class="code-variable">$response</span> = <span class="code-function">curl_exec</span>(<span class="code-variable">$ch</span>);
+<span class="code-variable">$data</span> = <span class="code-function">json_decode</span>(<span class="code-variable">$response</span>, <span class="code-keyword">true</span>);
+
+<span class="code-keyword">echo</span> <span class="code-string">"Found "</span> . <span class="code-function">count</span>(<span class="code-variable">$data</span>[<span class="code-string">'data'</span>]) . <span class="code-string">" folders"</span>;
+
+<span class="code-function">curl_close</span>(<span class="code-variable">$ch</span>);
+<span class="code-keyword">?></span></code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Base URL -->
+            <section id="base-url" class="docs-section glass-effect">
+                <h2 class="section-title">
+                    <i class="fas fa-link"></i>
+                    Base URL
+                </h2>
+                <p class="section-subtitle">
+                    All API requests should be made to the following base URL:
+                </p>
+
+                <div class="code-block-wrapper">
+                    <div class="code-header">
+                        <span class="code-language">
+                            <i class="fas fa-globe"></i>
+                            Production URL
+                        </span>
+                        <button class="copy-code-btn" onclick="copyCode(this)">
+                            <i class="fas fa-copy"></i>
+                            Copy
+                        </button>
+                    </div>
+                    <pre class="code-block"><code><span class="code-string">https://imageapi.pythonanywhere.com</span></code></pre>
+                </div>
+
+                <div class="alert-box info" style="margin-top: 1.5rem;">
+                    <i class="fas fa-info-circle alert-icon"></i>
+                    <div class="alert-content">
+                        <div class="alert-title">HTTPS Only</div>
+                        <div class="alert-text">
+                            All API requests must be made over HTTPS. HTTP requests will be rejected for security reasons.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Rate Limits -->
+            <section id="rate-limits" class="docs-section glass-effect">
+                <h2 class="section-title">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Rate Limits
+                </h2>
+                <p class="section-subtitle">
+                    To ensure fair usage and maintain service quality, API requests are rate-limited per account.
+                </p>
+
+                <div class="table-wrapper">
+                    <table class="docs-table">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-clock"></i> Time Period</th>
+                                <th><i class="fas fa-chart-line"></i> Request Limit</th>
+                                <th><i class="fas fa-info-circle"></i> Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Per Hour</strong></td>
+                                <td><span class="status-badge success">50 requests</span></td>
+                                <td>Resets every hour</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Per Day</strong></td>
+                                <td><span class="status-badge success">200 requests</span></td>
+                                <td>Resets at midnight UTC</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Registration</strong></td>
+                                <td><span class="status-badge success">5 per hour</span></td>
+                                <td>New account creation limit</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Login</strong></td>
+                                <td><span class="status-badge success">10 per hour</span></td>
+                                <td>Authentication attempts limit</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="alert-box warning">
+                    <i class="fas fa-exclamation-circle alert-icon"></i>
+                    <div class="alert-content">
+                        <div class="alert-title">Rate Limit Headers</div>
+                        <div class="alert-text">
+                            Each API response includes rate limit information in the headers:
+                            <ul style="margin: 0.5rem 0 0 1.5rem; padding: 0;">
+                                <li><code style="color: #f59e0b;">X-RateLimit-Limit</code>: Maximum requests allowed</li>
+                                <li><code style="color: #f59e0b;">X-RateLimit-Remaining</code>: Requests remaining in current window</li>
+                                <li><code style="color: #f59e0b;">X-RateLimit-Reset</code>: Time when the limit resets (Unix timestamp)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- API Endpoints -->
+            <section id="endpoints" class="docs-section glass-effect">
+                <h2 class="section-title">
+                    <i class="fas fa-server"></i>
+                    API Endpoints
+                </h2>
+                <p class="section-subtitle">
+                    Complete reference of all available API endpoints with request/response examples.
+                </p>
+
+                <!-- Register Endpoint -->
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method-badge post">POST</span>
+                        <span class="endpoint-path">/api/register</span>
+                    </div>
+                    <p class="endpoint-description">
+                        Create a new user account and receive an API key instantly.
+                    </p>
+
+                    <div class="params-section">
+                        <div class="params-title">
+                            <i class="fas fa-list"></i>
+                            Request Body Parameters
+                        </div>
+                        <div class="param-item">
+                            <div>
+                                <span class="param-name">username</span>
+                                <span class="param-type">string</span>
+                                <span class="param-required">required</span>
+                            </div>
+                            <div style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">Unique username (3-20 characters, alphanumeric)</div>
+                        </div>
+                        <div class="param-item">
+                            <div>
+                                <span class="param-name">email</span>
+                                <span class="param-type">string</span>
+                                <span class="param-required">required</span>
+                            </div>
+                            <div style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">Valid email address</div>
+                        </div>
+                        <div class="param-item">
+                            <div>
+                                <span class="param-name">password</span>
+                                <span class="param-type">string</span>
+                                <span class="param-required">required</span>
+                            </div>
+                            <div style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">Minimum 8 characters</div>
+                        </div>
+                    </div>
+
+                    <div class="response-example">
+                        <div class="code-block-wrapper">
+                            <div class="code-header">
+                                <span class="code-language">
+                                    <i class="fas fa-check-circle"></i>
+                                    Success Response (201)
+                                </span>
+                                <button class="copy-code-btn" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i>
+                                    Copy
+                                </button>
+                            </div>
+                            <pre class="code-block"><code>{
+  <span class="code-string">"status"</span>: <span class="code-string">"success"</span>,
+  <span class="code-string">"message"</span>: <span class="code-string">"User registered successfully"</span>,
+  <span class="code-string">"data"</span>: {
+    <span class="code-string">"api_key"</span>: <span class="code-string">"abc123def456..."</span>
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Login Endpoint -->
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method-badge post">POST</span>
+                        <span class="endpoint-path">/api/login</span>
+                    </div>
+                    <p class="endpoint-description">
+                        Authenticate with email and password to retrieve your API key.
+                    </p>
+
+                    <div class="params-section">
+                        <div class="params-title">
+                            <i class="fas fa-list"></i>
+                            Request Body Parameters
+                        </div>
+                        <div class="param-item">
+                            <div>
+                                <span class="param-name">email</span>
+                                <span class="param-type">string</span>
+                                <span class="param-required">required</span>
+                            </div>
+                            <div style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">Your registered email address</div>
+                        </div>
+                        <div class="param-item">
+                            <div>
+                                <span class="param-name">password</span>
+                                <span class="param-type">string</span>
+                                <span class="param-required">required</span>
+                            </div>
+                            <div style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">Your account password</div>
+                        </div>
+                    </div>
+
+                    <div class="response-example">
+                        <div class="code-block-wrapper">
+                            <div class="code-header">
+                                <span class="code-language">
+                                    <i class="fas fa-check-circle"></i>
+                                    Success Response (200)
+                                </span>
+                                <button class="copy-code-btn" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i>
+                                    Copy
+                                </button>
+                            </div>
+                            <pre class="code-block"><code>{
+  <span class="code-string">"status"</span>: <span class="code-string">"success"</span>,
+  <span class="code-string">"data"</span>: {
+    <span class="code-string">"api_key"</span>: <span class="code-string">"abc123def456..."</span>,
+    <span class="code-string">"username"</span>: <span class="code-string">"johndoe"</span>
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Get Folders Endpoint -->
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method-badge get">GET</span>
+                        <span class="endpoint-path">/api/folders</span>
+                    </div>
+                    <p class="endpoint-description">
+                        Retrieve all folders belonging to the authenticated user.
+                    </p>
+
+                    <div class="params-section">
+                        <div class="params-title">
+                            <i class="fas fa-key"></i>
+                            Authentication Required
+                        </div>
+                        <p style="color: rgba(255,255,255,0.6); margin: 0.5rem 0;">
+                            Include <code style="color: #3b82f6;">X-API-Key</code> header with your API key.
+                        </p>
+                    </div>
+
+                    <div class="response-example">
+                        <div class="code-block-wrapper">
+                            <div class="code-header">
+                                <span class="code-language">
+                                    <i class="fas fa-check-circle"></i>
+                                    Success Response (200)
+                                </span>
+                                <button class="copy-code-btn" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i>
+                                    Copy
+                                </button>
+                            </div>
+                            <pre class="code-block"><code>{
+  <span class="code-string">"status"</span>: <span class="code-string">"success"</span>,
+  <span class="code-string">"data"</span>: [
+    {
+      <span class="code-string">"id"</span>: <span class="code-number">1</span>,
+      <span class="code-string">"name"</span>: <span class="code-string">"Product Images"</span>,
+      <span class="code-string">"created_at"</span>: <span class="code-string">"2025-01-15T10:30:00"</span>,
+      <span class="code-string">"is_public"</span>: <span class="code-keyword">false</span>,
+      <span class="code-string">"file_count"</span>: <span class="code-number">12</span>
+    },
+    {
+      <span class="code-string">"id"</span>: <span class="code-number">2</span>,
+      <span class="code-string">"name"</span>: <span class="code-string">"Documents"</span>,
+      <span class="code-string">"created_at"</span>: <span class="code-string">"2025-01-16T14:20:00"</span>,
+      <span class="code-string">"is_public"</span>: <span class="code-keyword">true</span>,
+      <span class="code-string">"file_count"</span>: <span class="code-number">5</span>
+    }
+  ]
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Get Folder by ID -->
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method-badge get">GET</span>
+                        <span class="endpoint-path">/api/folder/{id}</span>
+                    </div>
+                    <p class="endpoint-description">
+                        Get detailed information about a specific folder including all its files.
+                    </p>
+
+                    <div class="params-section">
+                        <div class="params-title">
+                            <i class="fas fa-list"></i>
+                            URL Parameters
+                        </div>
+                        <div class="param-item">
+                            <div>
+                                <span class="param-name">id</span>
+                                <span class="param-type">integer</span>
+                                <span class="param-required">required</span>
+                            </div>
+                            <div style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">Folder ID to retrieve</div>
+                        </div>
+                    </div>
+
+                    <div class="response-example">
+                        <div class="code-block-wrapper">
+                            <div class="code-header">
+                                <span class="code-language">
+                                    <i class="fas fa-check-circle"></i>
+                                    Success Response (200)
+                                </span>
+                                <button class="copy-code-btn" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i>
+                                    Copy
+                                </button>
+                            </div>
+                            <pre class="code-block"><code>{
+  <span class="code-string">"status"</span>: <span class="code-string">"success"</span>,
+  <span class="code-string">"data"</span>: {
+    <span class="code-string">"id"</span>: <span class="code-number">1</span>,
+    <span class="code-string">"name"</span>: <span class="code-string">"Product Images"</span>,
+    <span class="code-string">"created_at"</span>: <span class="code-string">"2025-01-15T10:30:00"</span>,
+    <span class="code-string">"is_public"</span>: <span class="code-keyword">false</span>,
+    <span class="code-string">"files"</span>: [
+      {
+        <span class="code-string">"id"</span>: <span class="code-number">10</span>,
+        <span class="code-string">"filename"</span>: <span class="code-string">"product-1.jpg"</span>,
+        <span class="code-string">"file_type"</span>: <span class="code-string">"jpg"</span>,
+        <span class="code-string">"description"</span>: <span class="code-string">"Main product image"</span>,
+        <span class="code-string">"uploaded_at"</span>: <span class="code-string">"2025-01-15T11:00:00"</span>
+      }
+    ]
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Get Folder Images -->
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method-badge get">GET</span>
+                        <span class="endpoint-path">/api/folder/{id}/images</span>
+                    </div>
+                    <p class="endpoint-description">
+                        Get only image files from a specific folder (PNG, JPG, JPEG, GIF, WebP).
+                    </p>
+
+                    <div class="response-example">
+                        <div class="code-block-wrapper">
+                            <div class="code-header">
+                                <span class="code-language">
+                                    <i class="fas fa-check-circle"></i>
+                                    Success Response (200)
+                                </span>
+                                <button class="copy-code-btn" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i>
+                                    Copy
+                                </button>
+                            </div>
+                            <pre class="code-block"><code>{
+  <span class="code-string">"status"</span>: <span class="code-string">"success"</span>,
+  <span class="code-string">"data"</span>: [
+    {
+      <span class="code-string">"id"</span>: <span class="code-number">10</span>,
+      <span class="code-string">"filename"</span>: <span class="code-string">"product-1.jpg"</span>,
+      <span class="code-string">"url"</span>: <span class="code-string">"https://imageapi.pythonanywhere.com/static/uploads/1/product-1.jpg"</span>,
+      <span class="code-string">"description"</span>: <span class="code-string">"Main product image"</span>,
+      <span class="code-string">"metadata"</span>: {
+        <span class="code-string">"file_size"</span>: <span class="code-string">"2.5MB"</span>,
+        <span class="code-string">"dimensions"</span>: <span class="code-string">"1920x1080"</span>,
+        <span class="code-string">"uploaded_at"</span>: <span class="code-string">"2025-01-15T11:00:00"</span>
+      }
+    }
+  ]
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Get Folder PDFs -->
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method-badge get">GET</span>
+                        <span class="endpoint-path">/api/folder/{id}/pdfs</span>
+                    </div>
+                    <p class="endpoint-description">
+                        Get only PDF files from a specific folder.
+                    </p>
+
+                    <div class="response-example">
+                        <div class="code-block-wrapper">
+                            <div class="code-header">
+                                <span class="code-language">
+                                    <i class="fas fa-check-circle"></i>
+                                    Success Response (200)
+                                </span>
+                                <button class="copy-code-btn" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i>
+                                    Copy
+                                </button>
+                            </div>
+                            <pre class="code-block"><code>{
+  <span class="code-string">"status"</span>: <span class="code-string">"success"</span>,
+  <span class="code-string">"data"</span>: [
+    {
+      <span class="code-string">"id"</span>: <span class="code-number">15</span>,
+      <span class="code-string">"filename"</span>: <span class="code-string">"manual.pdf"</span>,
+      <span class="code-string">"url"</span>: <span class="code-string">"https://imageapi.pythonanywhere.com/static/uploads/1/manual.pdf"</span>,
+      <span class="code-string">"description"</span>: <span class="code-string">"Product manual"</span>,
+      <span class="code-string">"metadata"</span>: {
+        <span class="code-string">"file_size"</span>: <span class="code-string">"1.2MB"</span>,
+        <span class="code-string">"page_count"</span>: <span class="code-number">24</span>,
+        <span class="code-string">"uploaded_at"</span>: <span class="code-string">"2025-01-16T09:30:00"</span>
+      }
+    }
+  ]
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Get Image by ID -->
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method-badge get">GET</span>
+                        <span class="endpoint-path">/api/image/{id}</span>
+                    </div>
+                    <p class="endpoint-description">
+                        Get detailed information about a specific image file.
+                    </p>
+
+                    <div class="response-example">
+                        <div class="code-block-wrapper">
+                            <div class="code-header">
+                                <span class="code-language">
+                                    <i class="fas fa-check-circle"></i>
+                                    Success Response (200)
+                                </span>
+                                <button class="copy-code-btn" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i>
+                                    Copy
+                                </button>
+                            </div>
+                            <pre class="code-block"><code>{
+  <span class="code-string">"status"</span>: <span class="code-string">"success"</span>,
+  <span class="code-string">"data"</span>: {
+    <span class="code-string">"id"</span>: <span class="code-number">10</span>,
+    <span class="code-string">"name"</span>: <span class="code-string">"product-1.jpg"</span>,
+    <span class="code-string">"url"</span>: <span class="code-string">"https://imageapi.pythonanywhere.com/static/uploads/1/product-1.jpg"</span>,
+    <span class="code-string">"description"</span>: <span class="code-string">"Main product image"</span>,
+    <span class="code-string">"metadata"</span>: {
+      <span class="code-string">"file_size"</span>: <span class="code-string">"2.5MB"</span>,
+      <span class="code-string">"dimensions"</span>: <span class="code-string">"1920x1080"</span>,
+      <span class="code-string">"uploaded_at"</span>: <span class="code-string">"2025-01-15T11:00:00"</span>
+    }
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Get PDF Text -->
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method-badge get">GET</span>
+                        <span class="endpoint-path">/api/pdf/{id}/text</span>
+                    </div>
+                    <p class="endpoint-description">
+                        Extract and retrieve text content from a PDF file.
+                    </p>
+
+                    <div class="response-example">
+                        <div class="code-block-wrapper">
+                            <div class="code-header">
+                                <span class="code-language">
+                                    <i class="fas fa-check-circle"></i>
+                                    Success Response (200)
+                                </span>
+                                <button class="copy-code-btn" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i>
+                                    Copy
+                                </button>
+                            </div>
+                            <pre class="code-block"><code>{
+  <span class="code-string">"status"</span>: <span class="code-string">"success"</span>,
+  <span class="code-string">"data"</span>: {
+    <span class="code-string">"id"</span>: <span class="code-number">15</span>,
+    <span class="code-string">"filename"</span>: <span class="code-string">"manual.pdf"</span>,
+    <span class="code-string">"text"</span>: <span class="code-string">"Extracted text content from PDF..."</span>
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search Endpoint -->
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method-badge get">GET</span>
+                        <span class="endpoint-path">/api/search?q={query}</span>
+                    </div>
+                    <p class="endpoint-description">
+                        Search for files by filename or description across all your folders.
+                    </p>
+
+                    <div class="params-section">
+                        <div class="params-title">
+                            <i class="fas fa-list"></i>
+                            Query Parameters
+                        </div>
+                        <div class="param-item">
+                            <div>
+                                <span class="param-name">q</span>
+                                <span class="param-type">string</span>
+                                <span class="param-required">required</span>
+                            </div>
+                            <div style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">Search query string</div>
+                        </div>
+                    </div>
+
+                    <div class="response-example">
+                        <div class="code-block-wrapper">
+                            <div class="code-header">
+                                <span class="code-language">
+                                    <i class="fas fa-check-circle"></i>
+                                    Success Response (200)
+                                </span>
+                                <button class="copy-code-btn" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i>
+                                    Copy
+                                </button>
+                            </div>
+                            <pre class="code-block"><code>{
+  <span class="code-string">"status"</span>: <span class="code-string">"success"</span>,
+  <span class="code-string">"data"</span>: [
+    {
+      <span class="code-string">"id"</span>: <span class="code-number">10</span>,
+      <span class="code-string">"filename"</span>: <span class="code-string">"product-1.jpg"</span>,
+      <span class="code-string">"file_type"</span>: <span class="code-string">"jpg"</span>,
+      <span class="code-string">"description"</span>: <span class="code-string">"Main product image"</span>,
+      <span class="code-string">"url"</span>: <span class="code-string">"https://imageapi.pythonanywhere.com/static/uploads/1/product-1.jpg"</span>
+    }
+  ]
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Refresh API Key -->
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method-badge post">POST</span>
+                        <span class="endpoint-path">/api/refresh-key</span>
+                    </div>
+                    <p class="endpoint-description">
+                        Generate a new API key. Your old API key will be invalidated immediately.
+                    </p>
+
+                    <div class="alert-box warning">
+                        <i class="fas fa-exclamation-triangle alert-icon"></i>
+                        <div class="alert-content">
+                            <div class="alert-title">Warning</div>
+                            <div class="alert-text">
+                                This action cannot be undone. All applications using your old API key will stop working.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="response-example">
+                        <div class="code-block-wrapper">
+                            <div class="code-header">
+                                <span class="code-language">
+                                    <i class="fas fa-check-circle"></i>
+                                    Success Response (200)
+                                </span>
+                                <button class="copy-code-btn" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i>
+                                    Copy
+                                </button>
+                            </div>
+                            <pre class="code-block"><code>{
+  <span class="code-string">"status"</span>: <span class="code-string">"success"</span>,
+  <span class="code-string">"data"</span>: {
+    <span class="code-string">"api_key"</span>: <span class="code-string">"new_abc123def456..."</span>
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Error Handling -->
+            <section id="errors" class="docs-section glass-effect">
+                <h2 class="section-title">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Error Handling
+                </h2>
+                <p class="section-subtitle">
+                    The API uses standard HTTP status codes and returns error messages in JSON format.
+                </p>
+
+                <div class="table-wrapper">
+                    <table class="docs-table">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-hashtag"></i> Status Code</th>
+                                <th><i class="fas fa-info-circle"></i> Meaning</th>
+                                <th><i class="fas fa-clipboard-list"></i> Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="status-badge success">200</span></td>
+                                <td><strong>OK</strong></td>
+                                <td>Request succeeded</td>
+                            </tr>
+                            <tr>
+                                <td><span class="status-badge success">201</span></td>
+                                <td><strong>Created</strong></td>
+                                <td>Resource created successfully</td>
+                            </tr>
+                            <tr>
+                                <td><span class="status-badge error">400</span></td>
+                                <td><strong>Bad Request</strong></td>
+                                <td>Invalid request parameters</td>
+                            </tr>
+                            <tr>
+                                <td><span class="status-badge error">401</span></td>
+                                <td><strong>Unauthorized</strong></td>
+                                <td>Missing or invalid API key</td>
+                            </tr>
+                            <tr>
+                                <td><span class="status-badge error">403</span></td>
+                                <td><strong>Forbidden</strong></td>
+                                <td>Access denied to resource</td>
+                            </tr>
+                            <tr>
+                                <td><span class="status-badge error">404</span></td>
+                                <td><strong>Not Found</strong></td>
+                                <td>Resource does not exist</td>
+                            </tr>
+                            <tr>
+                                <td><span class="status-badge error">429</span></td>
+                                <td><strong>Too Many Requests</strong></td>
+                                <td>Rate limit exceeded</td>
+                            </tr>
+                            <tr>
+                                <td><span class="status-badge error">500</span></td>
+                                <td><strong>Internal Server Error</strong></td>
+                                <td>Server-side error occurred</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Error Response Format</h3>
+                <div class="code-block-wrapper">
+                    <div class="code-header">
+                        <span class="code-language">
+                            <i class="fas fa-times-circle"></i>
+                            Error Response Example
+                        </span>
+                        <button class="copy-code-btn" onclick="copyCode(this)">
+                            <i class="fas fa-copy"></i>
+                            Copy
+                        </button>
+                    </div>
+                    <pre class="code-block"><code>{
+  <span class="code-string">"status"</span>: <span class="code-string">"error"</span>,
+  <span class="code-string">"message"</span>: <span class="code-string">"Invalid API key"</span>,
+  <span class="code-string">"code"</span>: <span class="code-number">401</span>
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- Best Practices -->
+            <section id="best-practices" class="docs-section glass-effect">
+                <h2 class="section-title">
+                    <i class="fas fa-star"></i>
+                    Best Practices
+                </h2>
+                <p class="section-subtitle">
+                    Follow these guidelines to ensure optimal performance and security when using the API.
+                </p>
+
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-key"></i>
+                        </div>
+                        <div class="info-content">
+                            <h3>Secure Your API Key</h3>
+                            <p>
+                                Store your API key in environment variables. Never hard-code it in your source code
+                                or commit it to version control systems like Git.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <div class="info-content">
+                            <h3>Handle Errors Gracefully</h3>
+                            <p>
+                                Always check the HTTP status code and handle errors appropriately. Implement retry
+                                logic with exponential backoff for 5xx errors.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <div class="info-content">
+                            <h3>Respect Rate Limits</h3>
+                            <p>
+                                Monitor rate limit headers in responses and implement throttling in your application
+                                to avoid hitting limits.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-compress-alt"></i>
+                        </div>
+                        <div class="info-content">
+                            <h3>Optimize File Sizes</h3>
+                            <p>
+                                Compress images before uploading to reduce storage and bandwidth usage. Consider
+                                using appropriate formats (WebP for images, optimized PDFs).
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert-box success" style="margin-top: 2rem;">
+                    <i class="fas fa-check-circle alert-icon"></i>
+                    <div class="alert-content">
+                        <div class="alert-title">Need Help?</div>
+                        <div class="alert-text">
+                            If you have questions or need assistance, check the
+                            <a href="{{ url_for('dashboard') }}" style="color: #10b981; font-weight: 600;">Dashboard</a>
+                            for additional resources or contact support through your account settings.
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+
+<script>
+    // Code tab switching
+    const codeTabs = document.querySelectorAll('.code-tab');
+    codeTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const targetTab = this.dataset.tab;
+            const parentSection = this.closest('.docs-section');
+
+            parentSection.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+            parentSection.querySelectorAll('.code-panel').forEach(p => p.classList.remove('active'));
+
+            this.classList.add('active');
+            parentSection.querySelector(`#${targetTab}`).classList.add('active');
+        });
+    });
+
+    // Copy code functionality
+    function copyCode(button) {
+        const codeBlock = button.closest('.code-block-wrapper').querySelector('.code-block');
+        const text = codeBlock.textContent;
+
+        navigator.clipboard.writeText(text).then(() => {
+            const originalHTML = button.innerHTML;
+            button.classList.add('copied');
+            button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+
+            setTimeout(() => {
+                button.classList.remove('copied');
+                button.innerHTML = originalHTML;
+            }, 2000);
+        });
+    }
+
+    // Sidebar active link
+    const sidebarLinks = document.querySelectorAll('.sidebar-link');
+    const sections = document.querySelectorAll('.docs-section');
+
+    function setActiveLink() {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.clientHeight;
+            if (window.pageYOffset >= sectionTop - 150) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        sidebarLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${current}`) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    window.addEventListener('scroll', setActiveLink);
+    setActiveLink();
+
+    // Smooth scroll for sidebar links
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetSection = document.getElementById(targetId);
+            if (targetSection) {
+                const offsetTop = targetSection.offsetTop - 100;
+                window.scrollTo({
+                    top: offsetTop,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

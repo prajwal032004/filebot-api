@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="theme-color" content="#a78bfa" />
+    <meta
+      name="description"
+      content="AI-powered Image Assistant - Manage and search your images and PDFs effortlessly"
+    />
+    <link rel="manifest" href="/static/manifest.json" />
+    <link rel="apple-touch-icon" href="/static/icon-192.png" />
+    <title>Image Assistant - Setup</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      :root {
+        --primary: #a78bfa;
+        --secondary: #818cf8;
+        --accent: #c084fc;
+        --bg-dark: #0f0f23;
+        --bg-darker: #070714;
+        --glass-bg: rgba(255, 255, 255, 0.05);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --text-primary: #e0e7ff;
+        --text-secondary: #a5b4fc;
+        --text-muted: #6b7280;
+        --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        --glow: 0 0 20px rgba(167, 139, 250, 0.3);
+        --success: #10b981;
+        --error: #ef4444;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background: var(--bg-darker);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      body::before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+            circle at 20% 50%,
+            rgba(167, 139, 250, 0.15) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 80%,
+            rgba(129, 140, 248, 0.15) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 40% 20%,
+            rgba(192, 132, 252, 0.1) 0%,
+            transparent 50%
+          );
+        animation: pulse 20s ease-in-out infinite;
+        pointer-events: none;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.8;
+        }
+      }
+
+      .container {
+        width: 100%;
+        max-width: 600px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .setup-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 32px 24px;
+        box-shadow: var(--shadow);
+        animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      @media (min-width: 768px) {
+        .setup-card {
+          padding: 48px 40px;
+        }
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .logo {
+        text-align: center;
+        margin-bottom: 32px;
+      }
+
+      .logo-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 20px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        color: white;
+        margin-bottom: 16px;
+        box-shadow: var(--glow);
+        animation: float 3s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      .logo h1 {
+        font-size: 2em;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 8px;
+      }
+
+      .logo p {
+        color: var(--text-secondary);
+        font-size: 0.95em;
+      }
+
+      .setup-content {
+        margin-bottom: 32px;
+      }
+
+      .step {
+        margin-bottom: 24px;
+      }
+
+      .step-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .step-number {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 0.9em;
+        flex-shrink: 0;
+      }
+
+      .step h3 {
+        color: var(--text-primary);
+        font-size: 1.1em;
+      }
+
+      .step p {
+        color: var(--text-secondary);
+        line-height: 1.6;
+        margin-left: 44px;
+        font-size: 0.9em;
+      }
+
+      .api-key-section {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 24px;
+      }
+
+      .api-key-section h3 {
+        color: var(--text-primary);
+        margin-bottom: 16px;
+        font-size: 1.1em;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .input-group {
+        position: relative;
+        margin-bottom: 16px;
+      }
+
+      .input-group label {
+        display: block;
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+        font-size: 0.9em;
+        font-weight: 500;
+      }
+
+      .input-wrapper {
+        position: relative;
+      }
+
+      .input-wrapper input {
+        width: 100%;
+        padding: 14px 45px 14px 16px;
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        color: var(--text-primary);
+        font-size: 0.95em;
+        outline: none;
+        transition: all 0.3s;
+      }
+
+      .input-wrapper input:focus {
+        border-color: var(--primary);
+        box-shadow: var(--glow);
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 8px;
+        transition: color 0.3s;
+      }
+
+      .toggle-password:hover {
+        color: var(--primary);
+      }
+
+      .button-group {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        flex: 1;
+        min-width: 140px;
+        padding: 14px 24px;
+        border-radius: 12px;
+        font-size: 0.95em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        white-space: nowrap;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        box-shadow: var(--glow);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 30px rgba(167, 139, 250, 0.5);
+      }
+
+      .btn-primary:active {
+        transform: translateY(0);
+      }
+
+      .btn-secondary {
+        background: var(--glass-bg);
+        color: var(--text-primary);
+        border: 1px solid var(--glass-border);
+      }
+
+      .btn-secondary:hover {
+        border-color: var(--primary);
+        background: rgba(167, 139, 250, 0.1);
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .alert {
+        padding: 14px 16px;
+        border-radius: 12px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 0.9em;
+        animation: slideDown 0.4s ease;
+      }
+
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .alert-success {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        color: var(--success);
+      }
+
+      .alert-error {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: var(--error);
+      }
+
+      .alert-info {
+        background: rgba(167, 139, 250, 0.1);
+        border: 1px solid rgba(167, 139, 250, 0.3);
+        color: var(--primary);
+      }
+
+      .features {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin-top: 32px;
+      }
+
+      @media (min-width: 768px) {
+        .features {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      .feature-card {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        padding: 20px;
+        transition: all 0.3s;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--primary);
+        box-shadow: var(--glow);
+      }
+
+      .feature-card i {
+        font-size: 2em;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 12px;
+      }
+
+      .feature-card h4 {
+        color: var(--text-primary);
+        margin-bottom: 8px;
+        font-size: 1em;
+      }
+
+      .feature-card p {
+        color: var(--text-secondary);
+        font-size: 0.85em;
+        line-height: 1.5;
+      }
+
+      .spinner {
+        width: 18px;
+        height: 18px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .info-box {
+        background: rgba(167, 139, 250, 0.1);
+        border: 1px solid rgba(167, 139, 250, 0.3);
+        border-radius: 12px;
+        padding: 16px;
+        margin-top: 16px;
+      }
+
+      .info-box h4 {
+        color: var(--primary);
+        margin-bottom: 8px;
+        font-size: 0.95em;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .info-box p {
+        color: var(--text-secondary);
+        font-size: 0.85em;
+        line-height: 1.6;
+        margin-bottom: 8px;
+      }
+
+      .info-box code {
+        background: var(--glass-bg);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.9em;
+        color: var(--primary);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="setup-card">
+        <div class="logo">
+          <div class="logo-icon">
+            <i class="fas fa-robot"></i>
+          </div>
+          <h1>Image Assistant</h1>
+          <p>Your AI-powered image and PDF manager</p>
+        </div>
+
+        <div id="alertContainer"></div>
+
+        <div class="setup-content">
+          <div class="step">
+            <div class="step-header">
+              <div class="step-number">1</div>
+              <h3>Get Your API Key</h3>
+            </div>
+            <p>
+              Visit your dashboard at
+              <strong>imageapi.pythonanywhere.com</strong> to obtain your
+              personal API key. This key allows the assistant to securely access
+              your images and PDFs.
+            </p>
+          </div>
+
+          <div class="step">
+            <div class="step-header">
+              <div class="step-number">2</div>
+              <h3>Enter Your API Key</h3>
+            </div>
+            <p>
+              Paste your API key below. Don't worry, it will be stored securely
+              in your browser and you won't need to enter it again.
+            </p>
+          </div>
+
+          <div class="api-key-section">
+            <h3><i class="fas fa-key"></i> API Configuration</h3>
+            <div class="input-group">
+              <label for="apiKey">Your API Key</label>
+              <div class="input-wrapper">
+                <input
+                  type="password"
+                  id="apiKey"
+                  placeholder="Enter your API key here..."
+                  autocomplete="off"
+                />
+                <button class="toggle-password" onclick="togglePassword()">
+                  <i class="fas fa-eye" id="eyeIcon"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="button-group">
+              <button
+                class="btn btn-primary"
+                onclick="saveApiKey()"
+                id="saveBtn"
+              >
+                <i class="fas fa-save"></i>
+                <span>Save & Continue</span>
+              </button>
+              <button class="btn btn-secondary" onclick="clearApiKey()">
+                <i class="fas fa-trash"></i>
+                <span>Clear</span>
+              </button>
+            </div>
+
+            <div class="info-box">
+              <h4><i class="fas fa-shield-alt"></i> Privacy & Security</h4>
+              <p>
+                Your API key is stored locally in your browser using
+                localStorage. It never leaves your device and is only used to
+                communicate with the image API.
+              </p>
+              <p>
+                To install this app on your mobile device, tap the
+                <strong>"Add to Home Screen"</strong> option in your browser
+                menu.
+              </p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header">
+              <div class="step-number">3</div>
+              <h3>Start Using the Assistant</h3>
+            </div>
+            <p>
+              Once your API key is saved, you'll be redirected to the chatbot.
+              Ask questions like "Show all images" or "Find photos of nature"
+              and let the AI assistant help you!
+            </p>
+          </div>
+        </div>
+
+        <div class="features">
+          <div class="feature-card">
+            <i class="fas fa-search"></i>
+            <h4>Smart Search</h4>
+            <p>Find images and PDFs instantly using natural language queries</p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-folder"></i>
+            <h4>Folder Management</h4>
+            <p>Browse and organize your content across multiple folders</p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-mobile-alt"></i>
+            <h4>Mobile Ready</h4>
+            <p>Install as a PWA for offline access and app-like experience</p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-bolt"></i>
+            <h4>Lightning Fast</h4>
+            <p>Get instant results with our optimized search algorithms</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Check if API key already exists
+      window.onload = function () {
+        const savedKey = localStorage.getItem("imageAssistantApiKey");
+        if (savedKey) {
+          showAlert("You already have an API key saved!", "info");
+          document.getElementById("apiKey").value = "••••••••••••••••";
+
+          // Show option to go to chatbot directly
+          setTimeout(() => {
+            if (
+              confirm(
+                "You already have an API key saved. Would you like to go to the chatbot?"
+              )
+            ) {
+              window.location.href = "/chatbot";
+            }
+          }, 500);
+        }
+
+        // Register service worker for PWA
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker
+            .register("/static/sw.js")
+            .then((reg) => console.log("Service Worker registered"))
+            .catch((err) => console.log("Service Worker registration failed"));
+        }
+      };
+
+      function togglePassword() {
+        const input = document.getElementById("apiKey");
+        const icon = document.getElementById("eyeIcon");
+
+        if (input.type === "password") {
+          input.type = "text";
+          icon.classList.remove("fa-eye");
+          icon.classList.add("fa-eye-slash");
+        } else {
+          input.type = "password";
+          icon.classList.remove("fa-eye-slash");
+          icon.classList.add("fa-eye");
+        }
+      }
+
+      async function saveApiKey() {
+        const apiKey = document.getElementById("apiKey").value.trim();
+        const saveBtn = document.getElementById("saveBtn");
+
+        if (!apiKey || apiKey === "••••••••••••••••") {
+          showAlert("Please enter a valid API key", "error");
+          return;
+        }
+
+        // Show loading state
+        saveBtn.disabled = true;
+        saveBtn.innerHTML =
+          '<div class="spinner"></div><span>Verifying...</span>';
+
+        try {
+          // Verify the API key
+          const response = await fetch("/verify-api-key", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ api_key: apiKey }),
+          });
+
+          const data = await response.json();
+
+          if (data.valid) {
+            // Save to localStorage
+            localStorage.setItem("imageAssistantApiKey", apiKey);
+            showAlert("API key saved successfully! Redirecting...", "success");
+
+            // Redirect to chatbot after 1.5 seconds
+            setTimeout(() => {
+              window.location.href = "/chatbot";
+            }, 1500);
+          } else {
+            showAlert("Invalid API key. Please check and try again.", "error");
+            saveBtn.disabled = false;
+            saveBtn.innerHTML =
+              '<i class="fas fa-save"></i><span>Save & Continue</span>';
+          }
+        } catch (error) {
+          showAlert("Error verifying API key. Please try again.", "error");
+          saveBtn.disabled = false;
+          saveBtn.innerHTML =
+            '<i class="fas fa-save"></i><span>Save & Continue</span>';
+        }
+      }
+
+      function clearApiKey() {
+        if (confirm("Are you sure you want to clear the saved API key?")) {
+          localStorage.removeItem("imageAssistantApiKey");
+          document.getElementById("apiKey").value = "";
+          showAlert("API key cleared successfully", "success");
+        }
+      }
+
+      function showAlert(message, type) {
+        const container = document.getElementById("alertContainer");
+        const alert = document.createElement("div");
+        alert.className = `alert alert-${type}`;
+
+        let icon = "fa-info-circle";
+        if (type === "success") icon = "fa-check-circle";
+        if (type === "error") icon = "fa-exclamation-circle";
+
+        alert.innerHTML = `
+                <i class="fas ${icon}"></i>
+                <span>${message}</span>
+            `;
+
+        container.appendChild(alert);
+
+        // Remove after 5 seconds
+        setTimeout(() => {
+          alert.style.animation = "slideDown 0.4s ease reverse";
+          setTimeout(() => alert.remove(), 400);
+        }, 5000);
+      }
+
+      // Handle Enter key
+      document
+        .getElementById("apiKey")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            saveApiKey();
+          }
+        });
+    </script>
+  </body>
+</html>
