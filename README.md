@@ -376,17 +376,24 @@ X-API-Key: your_current_api_key
 
 ## 📸 Screenshots
 
-### Main Application Dashboard
+## 📸 Screenshots
 
-![Dashboard](imgs/Main Application Dashboard.png)
+### Main Application Dashboard
+![Dashboard](imgs/Main%20Application%20Dashboard.png)
 
 ### Folder Management
-
-![Folders](https://via.placeholder.com/800x400?text=Folder+Management)
+![Folders](imgs/Folder%20Management.png)
 
 ### Chatbot Interface
+![Chatbot](imgs/Chatbot.png)
+```
 
-![Chatbot](https://via.placeholder.com/800x400?text=Chatbot+Interface)
+
+**Better approach:** Rename your image files without spaces:
+```
+imgs/dashboard.png
+imgs/folder-management.png
+imgs/chatbot-interface.png
 
 ## 🛠️ Technologies Used
 
