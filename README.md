@@ -135,7 +135,7 @@ This project consists of two main components:
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/prajwal032004/image-pdf-management-system.git
+git clone https://github.com/prajwal032004/filebot-api.git
 cd image-pdf-management-system
 ```
 
@@ -270,8 +270,8 @@ POST /api/register
 Content-Type: application/json
 
 {
-  "username": "john_doe",
-  "email": "john@example.com",
+  "username": "prajwalab",
+  "email": "prajwal@example.com",
   "password": "secure_password"
 }
 ```
@@ -283,7 +283,7 @@ POST /api/login
 Content-Type: application/json
 
 {
-  "email": "john@example.com",
+  "email": "prajwal@example.com",
   "password": "secure_password"
 }
 ```
@@ -475,7 +475,7 @@ image-pdf-management-system/
 
    ```bash
    # Upload via web interface or Git
-   git clone https://github.com/prajwal032004/image-pdf-management-system.git
+   git clone https://github.com/prajwal032004/filebot-api.git
    ```
 
 2. **Install Dependencies**
@@ -495,18 +495,6 @@ image-pdf-management-system/
    python init_db.py
    ```
 
-5. **Reload Web App**
-
-## 🤝 Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
 ### Contribution Guidelines
 
 - Follow PEP 8 style guide
@@ -520,17 +508,7 @@ Contributions are welcome! Please follow these steps:
 
 - PDF text extraction may fail on scanned documents
 - Large file uploads (>10MB) are rejected
-
-### Planned Features
-
-- [ ] Multi-language support for chatbot
-- [ ] Advanced image filters and editing
-- [ ] Bulk file operations
-- [ ] File sharing with expiration links
-- [ ] Integration with cloud storage (AWS S3, Google Drive)
-- [ ] Mobile app version
-- [ ] Advanced analytics dashboard
-- [ ] OCR for scanned PDFs
+CR for scanned PDFs
 
 ## 📄 License
 
@@ -541,7 +519,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Prajwal**
 
 - GitHub: [@prajwal032004](https://github.com/prajwal032004)
-- Project Link: [https://github.com/prajwal032004/image-pdf-management-system](https://github.com/prajwal032004/image-pdf-management-system)
+- Project Link: [https://github.com/prajwal032004/filebot-api.git](https://github.com/prajwal032004/filebot-api.git)
 
 ## 🙏 Acknowledgments
 
