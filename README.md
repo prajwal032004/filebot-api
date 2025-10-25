@@ -386,14 +386,6 @@ X-API-Key: your_current_api_key
 
 ### Chatbot Interface
 ![Chatbot](imgs/Chatbot.png)
-```
-
-
-**Better approach:** Rename your image files without spaces:
-```
-imgs/dashboard.png
-imgs/folder-management.png
-imgs/chatbot-interface.png
 
 ## 🛠️ Technologies Used
 
