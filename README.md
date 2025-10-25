@@ -7,20 +7,6 @@ A comprehensive Flask-based file management system with RESTful API and an intel
 [![Python](https://img.shields.io/badge/Python-3.8+-yellow?style=for-the-badge&logo=python)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Flask-2.0+-black?style=for-the-badge&logo=flask)](https://flask.palletsprojects.com/)
 
-## 📋 Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [System Architecture](#system-architecture)
-- [Installation](#installation)
-- [Usage](#usage)
-- [API Documentation](#api-documentation)
-- [Chatbot Commands](#chatbot-commands)
-- [Screenshots](#screenshots)
-- [Technologies Used](#technologies-used)
-- [Contributing](#contributing)
-- [License](#license)
-
 ## 🌟 Overview
 
 This project consists of two main components:
