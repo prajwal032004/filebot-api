@@ -378,7 +378,7 @@ X-API-Key: your_current_api_key
 
 ### Main Application Dashboard
 
-![Dashboard](https://via.placeholder.com/800x400?text=Dashboard+Screenshot)
+![Dashboard](imgs/Main Application Dashboard.png)
 
 ### Folder Management
 
